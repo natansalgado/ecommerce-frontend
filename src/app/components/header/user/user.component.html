@@ -1,0 +1,45 @@
+<ng-container *ngIf="!user">
+  <button class="btn btn-primary" routerLink="/login">Faça login</button>
+</ng-container>
+
+<div *ngIf="user">
+  <div class="d-flex flex-row align-items-center">
+    <h5 class="text-light m-0 mr-2">Olá, {{ user.name }}</h5>
+    <p class="text-light m-0">R$ {{ user.balance | number : "1.2-2" }}</p>
+
+    <button
+      class="btn btn-secondary ml-2"
+      type="button"
+      data-toggle="collapse"
+      data-target="#collapseExample"
+      aria-expanded="false"
+      aria-controls="collapseExample"
+    >
+      <i class="fa fa-angle-down"></i>
+    </button>
+    <div
+      style="right: 0; top: 100%; z-index: 100"
+      class="position-absolute bg-dark text-uppercase"
+    >
+      <div
+        class="collapse p-2"
+        id="collapseExample"
+        style="gap: 0; top: 100%; z-index: 100"
+      >
+        <ul class="nav flex-column">
+          <li class="nav-item hover">
+            <a class="nav-link active text-white" href="#">carrinho</a>
+          </li>
+          <li class="nav-item hover">
+            <a
+              class="nav-link active text-white border-top border-secondary"
+              href="#"
+              >configurações</a
+            >
+          </li>
+          <button class="btn btn-danger">SAIR</button>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

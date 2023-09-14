@@ -1,0 +1,43 @@
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-md-6 offset-md-3">
+      <div class="card bg-light">
+        <h4 class="card-header">Login</h4>
+        <div class="card-body">
+          <form (submit)="login()">
+            <div class="form-group">
+              <div *ngIf="error" class="alert alert-danger">
+                {{ error }}
+              </div>
+              <label for="email">Email</label>
+              <input
+                type="email"
+                class="form-control"
+                id="email"
+                [(ngModel)]="email"
+                name="email"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="password">Password</label>
+              <input
+                type="password"
+                class="form-control"
+                id="password"
+                [(ngModel)]="password"
+                name="password"
+                required
+              />
+            </div>
+            <div class="text-center d-flex flex-column">
+              <button type="submit" class="btn btn-primary mt-2">Login</button>
+              <a class="mt-2" href="/register">Não possui uma conta? Se registre!</a>
+              <a class="mt-2" href="/">voltar</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

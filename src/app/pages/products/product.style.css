@@ -1,0 +1,5 @@
+
+/* Adicione estilo personalizado para as estrelas preenchidas */
+.rating span.filled i {
+  color: rgb(255, 187, 0);
+}
