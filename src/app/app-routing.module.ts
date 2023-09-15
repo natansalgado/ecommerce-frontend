@@ -1,21 +1,37 @@
 import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { NavigationEnd, Router, RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from './pages/login/login.component';
 import { RegisterComponent } from './pages/register/register.component';
 import { ProductsComponent } from './pages/products/products.component';
 import { ProductComponent } from './pages/product/product.component';
+import { StoreComponent } from './pages/store/store.component';
+import { CartComponent } from './pages/cart/cart.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'products', pathMatch: 'full' },
   { path: 'products', component: ProductsComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
-  { path: 'store/:id', component: ProductsComponent },
+  { path: 'store/:id', component: StoreComponent },
   { path: 'product/:id', component: ProductComponent },
+  { path: 'cart', component: CartComponent },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
 })
-export class AppRoutingModule {}
+export class AppRoutingModule {
+  constructor(private router: Router) {
+    this.router.events.subscribe((event) => {
+      const lastUrl = localStorage.getItem('lastUrl');
+
+      if (event instanceof NavigationEnd) {
+        if (event.url !== '/login' && event.url !== '/register' && lastUrl) {
+          localStorage.removeItem('lastUrl');
+          window.location.reload();
+        }
+      }
+    });
+  }
+}

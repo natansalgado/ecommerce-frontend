@@ -1,13 +1,15 @@
-<div *ngIf="products.length < 1">
+<div *ngIf="!store">
   <h1 class="mt-2 px-4">Erro ao buscar produtos no banco de dados</h1>
 </div>
 
-<div *ngIf="products.length >= 1">
+<div *ngIf="store">
   <div class="container mt-5">
-    <h1 class="mb-4">Todos os Produtos</h1>
+    <h1 class="mb-4">
+      Todos os Produtos de <strong>{{ store.name }}</strong>
+    </h1>
     <div class="row">
       <div
-        *ngFor="let product of products"
+        *ngFor="let product of store.products"
         class="col-xl-3 col-lg-4 col-md-6 col-sm-6 mb-4"
       >
         <div class="card">
@@ -18,14 +20,12 @@
             style="height: 230px; object-fit: contain"
           />
           <div class="card-body">
-            <a href="/product/{{ product.id }}">
-              <h5
-                class="card-title d-inline-block text-truncate m-0"
-                style="max-width: 100%"
-              >
-                {{ product.title }}
-              </h5>
-            </a>
+            <h5
+              class="card-title d-inline-block text-truncate m-0"
+              style="max-width: 100%"
+            >
+              {{ product.title }}
+            </h5>
             <p class="m-0">
               <strong>R$ {{ product.price | number : "1.2-2" }}</strong>
             </p>
@@ -53,13 +53,12 @@
               -
               <span class="text-truncate"> {{ product.sold }} vendidos</span>
             </p>
-
-            <p class="mt-2 mb-0">
-              Loja:
-              <a href="/store/{{ product.store_id }}">{{
-                product.store.name
-              }}</a>
-            </p>
+            <a
+              href="#"
+              [routerLink]="['/product', product.id]"
+              class="btn btn-primary mt-2"
+              >Ver Detalhes</a
+            >
           </div>
         </div>
       </div>

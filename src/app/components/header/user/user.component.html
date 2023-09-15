@@ -1,5 +1,5 @@
 <ng-container *ngIf="!user">
-  <button class="btn btn-primary" routerLink="/login">Faça login</button>
+  <button class="btn btn-primary" (click)="login()">Faça login</button>
 </ng-container>
 
 <div *ngIf="user">
@@ -28,16 +28,18 @@
       >
         <ul class="nav flex-column">
           <li class="nav-item hover">
-            <a class="nav-link active text-white" href="#">carrinho</a>
+            <a class="nav-link active text-white" href="cart"
+              ><i class="fa fa-shopping-cart"></i> carrinho</a
+            >
           </li>
           <li class="nav-item hover">
             <a
               class="nav-link active text-white border-top border-secondary"
               href="#"
-              >configurações</a
+              ><i class="fa fa-gear"></i> configurações</a
             >
           </li>
-          <button class="btn btn-danger">SAIR</button>
+          <button (click)="quit()" class="btn btn-danger">SAIR</button>
         </ul>
       </div>
     </div>

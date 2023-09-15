@@ -1,60 +1,118 @@
-<div class="d-flex flex-column justify-content-between" style="height: 100vh">
-  <app-header></app-header>
+<div *ngIf="product" class="mb-5">
+  <div class="container mt-5 mb-5">
+    <div class="row">
+      <div class="col-md-6">
+        <img
+          src="{{ product.image_urls }}"
+          alt="{{ product.title }}"
+          class="img-fluid border mb-2 p-2 w-100"
+        />
+      </div>
+      <div class="col-md-6">
+        <h1>{{ product.title }}</h1>
+        <p>{{ product.description }}</p>
+        <p>
+          Loja:
+          <a [routerLink]="['/store', product.store_id]">{{
+            product.store.name
+          }}</a>
+        </p>
 
-  <div *ngIf="product" class="mb-5">
-    <div class="container mt-5 mb-5">
-      <div class="row">
-        <div class="col-md-6">
-          <img
-            src="{{ product.image_urls }}"
-            alt="{{ product.title }}"
-            class="img-fluid border mb-2 p-2"
-          />
+        <p>
+          <strong>R$ {{ product.price | number : "1.2-2" }}</strong>
+        </p>
+        <p>
+          Disponivel:
+          <span class="text-success">{{ product.quantity }} unidades</span>
+        </p>
+
+        <div class="d-flex align-items-center mb-3">
+          <p class="m-0">Quantidade:</p>
+          <div class="d-flex align-items-center ml-2">
+            <button
+              [disabled]="quantity <= 1"
+              (click)="changeQuantity(-1)"
+              class="btn p-1 px-2 border mr-1"
+            >
+              -
+            </button>
+            <p class="mb-0 py-1 px-2 border rounded">
+              {{ quantity }}
+            </p>
+            <button
+              [disabled]="quantity >= product.quantity"
+              (click)="changeQuantity(1)"
+              class="btn py-1 px-2 border ml-1"
+            >
+              +
+            </button>
+          </div>
         </div>
-        <div class="col-md-6">
-          <h1>{{ product.title }}</h1>
-          <p>{{ product.description }}</p>
-          <p>
-            Loja:
-            <a [routerLink]="['/store', product.store_id]">{{
-              product.store.name
-            }}</a>
-          </p>
 
-          <p>
-            <strong>R$ {{ product.price | number : "1.2-2" }}</strong>
+        <p>
+          Total:
+          <strong>R$ {{ product.price * quantity | number : "1.2-2" }}</strong>
+        </p>
+
+        <div
+          *ngIf="added"
+          class="alert alert-success alert-dismissible fade show"
+          role="alert"
+        >
+          <strong
+            >Adicionado {{ addedQuantity }}x ao carrinho com sucesso!</strong
+          >
+        </div>
+
+        <div
+          *ngIf="errorMessage"
+          class="alert alert-danger alert-dismissible fade show"
+          role="alert"
+        >
+          <strong>{{ errorMessage }}</strong>
+        </div>
+
+        <div *ngIf="productInCart" class="border rounded p-2 mb-2 bg-light">
+          <p class="mb-1">
+            <strong>Esse produto já se encontra em seu carrinho.</strong>
           </p>
-          <p>
-            Disponivel:
-            <span class="text-success">{{ product.quantity }} unidades</span>
+          <p class="mb-1">
+            Quantidade: <strong>{{ productInCart.quantity }}</strong>
           </p>
-          <p>
-            Quantidade:
-            <input
-              type="number"
-              min="1"
-              value="1"
-              max="{{ product.quantity }}"
-            />
+          <p class="mb-1">
+            Preço total:
+            <strong>R$ {{ productInCart.price | number : "1.2-2" }}</strong>
           </p>
-          <button *ngIf="isLogged" class="btn btn-primary">
-            Adicionar ao Carrinho
+        </div>
+
+        <div class="d-flex flex-column">
+          <button
+            *ngIf="isLogged"
+            (click)="addToCart()"
+            class="btn btn-success mb-2"
+          >
+            <i class="fa fa-shopping-cart"></i> Adicionar ao Carrinho
           </button>
-          <p *ngIf="!isLogged">
-            Faça o login para poder adicionar no carrinho.
-          </p>
+
+          <a *ngIf="isLogged" href="/cart" class="btn btn-primary mb-2">
+            <i class="fa fa-shopping-cart"></i> Ir para carrinho
+          </a>
+
+          <a href="/products" class="btn btn-primary">
+            <i class="fa fa-search"></i> Continuar pesquisando
+          </a>
         </div>
+
+        <p *ngIf="!isLogged" class="text-danger">
+          Faça o login para poder adicionar o produto ao carrinho.
+        </p>
       </div>
     </div>
   </div>
+</div>
 
-  <div *ngIf="!product" class="text-center mb-5">
-    <div class="mb-5">
-      <h1 class="mb-5">Produto não encontrado.</h1>
-    </div>
+<div *ngIf="!product" class="text-center mb-5">
+  <div class="mb-5">
+    <h1 class="mb-5">Produto não encontrado.</h1>
   </div>
-
-  <footer class="bg-dark text-light text-center py-3 mb-0">
-    <div class="container">&copy; 2023 Ecommerce.</div>
-  </footer>
 </div>

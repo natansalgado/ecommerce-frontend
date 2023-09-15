@@ -46,6 +46,8 @@ export class RegisterComponent {
         headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
       };
 
+      const lastUrl = localStorage.getItem('lastUrl');
+
       this.http
         .post('http://localhost:3000/user', userData, httpOptions)
         .subscribe(
@@ -64,12 +66,17 @@ export class RegisterComponent {
                     'Ocorreu um erro durante o login após o registro. Por favor, tente novamente mais tarde.';
                 }
               );
-              window.history.back();
+              this.router.navigate([lastUrl]);
           },
           (error) => {
             this.error = error;
           }
         );
     }
+  }
+
+  back() {
+    const lastUrl = localStorage.getItem('lastUrl');
+    this.router.navigate([lastUrl]);
   }
 }

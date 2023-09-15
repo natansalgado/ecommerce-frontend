@@ -12,6 +12,8 @@ import { HeaderComponent } from './components/header/header.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UserComponent } from './components/header/user/user.component';
 import { ProductComponent } from './pages/product/product.component';
+import { StoreComponent } from './pages/store/store.component';
+import { CartComponent } from './pages/cart/cart.component';
 
 @NgModule({
   declarations: [
@@ -22,6 +24,8 @@ import { ProductComponent } from './pages/product/product.component';
     HeaderComponent,
     UserComponent,
     ProductComponent,
+    StoreComponent,
+    CartComponent,
   ],
   imports: [
     BrowserModule,

@@ -9,7 +9,6 @@
             (submit)="register()"
             class="bg-light p-3 rounded"
           >
-            <!-- Exibir a mensagem de erro se houver -->
             <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
 
             <div class="form-group">
@@ -38,7 +37,6 @@
                 class="form-control"
                 formControlName="password"
               />
-              <!-- Verificar nulidade antes de exibir a mensagem de erro -->
               <div
                 *ngIf="form.get('password')?.hasError('pattern')"
                 class="text-danger"
@@ -62,7 +60,9 @@
               <a class="mt-2" href="/login"
                 >Já possui uma conta? Faça o login!</a
               >
-              <a class="mt-2" href="/">voltar</a>
+              <a class="mt-2" (click)="back()" style="cursor: pointer"
+                >voltar</a
+              >
             </div>
           </form>
         </div>

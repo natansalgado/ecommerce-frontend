@@ -8,21 +8,55 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class ProductComponent implements OnInit {
   product: any = null;
-  isLogged: boolean = false;
+  isLogged = false;
+  quantity = 1;
+
+  addedQuantity = 0;
+
+  added = false;
+  productInCart: any = null;
+
+  errorMessage = '';
 
   constructor(private route: ActivatedRoute, private http: HttpClient) {}
 
   ngOnInit(): void {
+    this.getApi();
+    this.checkIsLogged();
+  }
+
+  getApi() {
     this.route.params.subscribe(async (params) => {
       try {
         this.product = await this.http
           .get<any>(`http://localhost:3000/product/${params['id']}`)
           .toPromise();
-      } catch (error) {
-      }
+        this.checkIfProductIsInCart();
+      } catch (error) {}
     });
+  }
 
-    this.checkIsLogged();
+  checkIfProductIsInCart() {
+    const token = localStorage.getItem('token');
+
+    if (token) {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${token}`,
+      });
+
+      this.http
+        .get(`http://localhost:3000/cart/product/${this.product.id}`, {
+          headers,
+        })
+        .subscribe(
+          (res) => {
+            this.productInCart = res;
+          },
+          (error) => {}
+        );
+    } else {
+      this.isLogged = false;
+    }
   }
 
   checkIsLogged(): void {
@@ -38,7 +72,7 @@ export class ProductComponent implements OnInit {
           headers,
         })
         .subscribe(
-          (data: any) => {
+          (data) => {
             this.isLogged = true;
           },
           (error) => {
@@ -49,5 +83,41 @@ export class ProductComponent implements OnInit {
     } else {
       this.isLogged = false;
     }
+  }
+
+  changeQuantity(quantity: number) {
+    this.quantity += quantity;
+  }
+
+  addToCart() {
+    const token = localStorage.getItem('token');
+
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const body = {
+      productId: this.product.id,
+      quantity: Number(this.quantity),
+    };
+
+    this.http
+      .post('http://localhost:3000/cart/add', body, { headers })
+      .subscribe(
+        (response) => {
+          this.addedQuantity = this.quantity;
+          this.added = true;
+          this.errorMessage = '';
+          this.getApi();
+        },
+        (error) => {
+          console.error(error);
+          if (error.error.message === 'Insuficient product quantity') {
+            this.errorMessage =
+              'Este produto não possui unidades o suficiente!';
+            this.added = false;
+          }
+        }
+      );
   }
 }

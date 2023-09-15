@@ -27,16 +27,23 @@ export class LoginComponent {
       password: this.password,
     };
 
+    const lastUrl = localStorage.getItem('lastUrl');
+
     this.http
       .post<any>('http://localhost:3000/auth/login', loginData)
       .subscribe(
         (res: any) => {
           localStorage.setItem('token', res.accessToken);
-          window.history.back();
+          this.back()
         },
         (err) => {
           this.error = 'Usuário ou senha inválido.';
         }
       );
+  }
+
+  back() {
+    const lastUrl = localStorage.getItem('lastUrl');
+    this.router.navigate([lastUrl]);
   }
 }

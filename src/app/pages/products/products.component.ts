@@ -4,7 +4,7 @@ import { ProductsService } from './products.service';
 @Component({
   selector: 'app-products',
   templateUrl: './products.component.html',
-  styleUrls: ['./product.style.css'],
+  styleUrls: ['./products.style.css'],
 })
 export class ProductsComponent implements OnInit {
   products: any[] = [];

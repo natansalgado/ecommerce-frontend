@@ -1,0 +1,93 @@
+<div class="container mt-5">
+  <h1 class="mb-4">Carrinho de Compras</h1>
+
+  <ul *ngIf="cart && cart.cartItems.length > 0" class="list-group">
+    <div class="text-right m-0 mb-2">
+      <button (click)="(empty())" class="btn btn-danger">
+        Esvaziar carrinho
+      </button>
+    </div>
+    <li *ngFor="let item of cart.cartItems" class="list-group-item">
+      <div class="row">
+        <div class="col-md-2">
+          <img
+            src="{{ item.product.image_urls }}"
+            alt="{{ item.product.title }}"
+            class="img-thumbnail"
+          />
+        </div>
+
+        <div class="col-md-4">
+          <h4 class="list-group-item-heading">{{ item.product.title }}</h4>
+        </div>
+
+        <div class="col-md-2">
+          <p class="list-group-item-text mb-0">
+            <strong>Preço de cada:</strong>
+          </p>
+          <p class="mb-0 py-1 px-2 border rounded">
+            R$ {{ item.product.price | number : "1.2-2" }}
+          </p>
+        </div>
+
+        <div class="col-md-2">
+          <p class="list-group-item-text mb-0">
+            <strong>Preço total:</strong>
+          </p>
+          <p class="mb-0 py-1 px-2 border rounded d-block">
+            R$ {{ item.product.price * item.quantity | number : "1.2-2" }}
+          </p>
+        </div>
+
+        <div class="col-md-2 text-left">
+          <p class="list-group-item-text mb-0">
+            <strong>Quantidade:</strong>
+          </p>
+          <div class="d-flex">
+            <button
+              (click)="changeQuantity(item.product_id, -1)"
+              class="btn py-1 px-2 border mr-1"
+            >
+              -
+            </button>
+            <p class="mb-0 py-1 px-2 border rounded">
+              {{ item.quantity }}
+            </p>
+            <button
+              [disabled]="item.quantity >= item.product.quantity"
+              (click)="changeQuantity(item.product_id, 1)"
+              class="btn py-1 px-2 border ml-1"
+            >
+              +
+            </button>
+          </div>
+          <button
+            (click)="changeQuantity(item.product_id, -item.quantity)"
+            class="btn btn-danger mt-1"
+          >
+            Remover Item
+          </button>
+        </div>
+      </div>
+    </li>
+  </ul>
+
+  <div *ngIf="cart && cart.cartItems.length > 0" class="mt-3 mb-5">
+    <div class="text-end">
+      <h5>Total do Carrinho: R$ {{ cart.total_price | number : "1.2-2" }}</h5>
+    </div>
+    <div class="text-end mt-3">
+      <a href="/products" class="btn btn-primary mr-2">Continuar Comprando</a>
+      <button (click)="finishPurchase()" class="btn btn-success">
+        Finalizar Compra
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="!cart || cart.cartItems.length <= 0">
+    <div class="text-end">
+      <h5>Carrinho vazio...</h5>
+    </div>
+    <a href="/products" class="btn btn-primary">Continuar Comprando</a>
+  </div>
+</div>
