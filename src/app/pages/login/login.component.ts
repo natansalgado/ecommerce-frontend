@@ -30,20 +30,29 @@ export class LoginComponent {
     const lastUrl = localStorage.getItem('lastUrl');
 
     this.http
-      .post<any>('http://localhost:3000/auth/login', loginData)
+      .post<any>('http://192.168.0.13:3000/auth/login', loginData)
       .subscribe(
         (res: any) => {
           localStorage.setItem('token', res.accessToken);
-          this.back()
+          this.back();
         },
         (err) => {
-          this.error = 'Usuário ou senha inválido.';
+          if (err.error.message === 'Invalid email or password') {
+            this.error = 'Usuário ou senha inválido.';
+          } else {
+            this.error =
+              'Problemas ao tentar acessar o servidor, tente novamente mais tarde.';
+          }
         }
       );
   }
 
   back() {
     const lastUrl = localStorage.getItem('lastUrl');
-    this.router.navigate([lastUrl]);
+    if (lastUrl) {
+      this.router.navigate([lastUrl]);
+    } else {
+      this.router.navigate(['/products']);
+    }
   }
 }

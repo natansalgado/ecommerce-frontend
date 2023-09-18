@@ -14,6 +14,7 @@ import { UserComponent } from './components/header/user/user.component';
 import { ProductComponent } from './pages/product/product.component';
 import { StoreComponent } from './pages/store/store.component';
 import { CartComponent } from './pages/cart/cart.component';
+import { SettingsComponent } from './pages/settings/settings.component';
 
 @NgModule({
   declarations: [
@@ -26,6 +27,7 @@ import { CartComponent } from './pages/cart/cart.component';
     ProductComponent,
     StoreComponent,
     CartComponent,
+    SettingsComponent,
   ],
   imports: [
     BrowserModule,

@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
 })
 export class CartComponent implements OnInit {
   cart: any = null;
+  error: string | null = null;
 
   constructor(private http: HttpClient, private router: Router) {}
 
@@ -23,7 +24,7 @@ export class CartComponent implements OnInit {
         Authorization: `Bearer ${token}`,
       });
 
-      this.http.get('http://localhost:3000/cart', { headers }).subscribe(
+      this.http.get('http://192.168.0.13:3000/cart', { headers }).subscribe(
         (response) => {
           this.cart = response;
         },
@@ -47,7 +48,7 @@ export class CartComponent implements OnInit {
       const body = { productId, quantity };
 
       this.http
-        .post('http://localhost:3000/cart/add', body, { headers })
+        .post('http://192.168.0.13:3000/cart/add', body, { headers })
         .subscribe(
           (res) => {
             this.getCartFromApi();
@@ -68,7 +69,7 @@ export class CartComponent implements OnInit {
       });
 
       this.http
-        .delete('http://localhost:3000/cart/empty', {
+        .delete('http://192.168.0.13:3000/cart/empty', {
           headers,
         })
         .subscribe((res) => {
@@ -78,6 +79,30 @@ export class CartComponent implements OnInit {
   }
 
   finishPurchase() {
-    console.log('R$', this.cart.total_price);
+    const token = localStorage.getItem('token');
+
+    if (token) {
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${token}`,
+      });
+
+      this.http
+        .post('http://192.168.0.13:3000/historic', {}, { headers })
+        .subscribe(
+          (res) => {
+            console.log(res);
+            this.getCartFromApi();
+            this.error = null;
+          },
+          (err) => {
+            if ((err.error.message = 'Insufficient funds')) {
+              this.error =
+                'Saldo da conta insuficiente. Faça um depósito para poder finalizar a compra.';
+            } else {
+              this.error = 'Erro ao tentar se conectar com o servidor.';
+            }
+          }
+        );
+    }
   }
 }

@@ -5,6 +5,7 @@ import { NavigationEnd, Router } from '@angular/router';
 @Component({
   selector: 'app-user',
   templateUrl: './user.component.html',
+  styleUrls: ['./user.component.css'],
 })
 export class UserComponent implements OnInit {
   user: any = null;
@@ -20,7 +21,7 @@ export class UserComponent implements OnInit {
       });
 
       this.http
-        .get('http://localhost:3000/auth/profile', { headers })
+        .get('http://192.168.0.13:3000/auth/profile', { headers })
         .subscribe(
           (data: any) => {
             this.user = data;

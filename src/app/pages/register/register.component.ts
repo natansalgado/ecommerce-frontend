@@ -17,8 +17,22 @@ export class RegisterComponent {
     private fb: FormBuilder
   ) {
     this.form = this.fb.group({
-      name: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
+      name: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern(/^[A-Z][a-zA-Z]+(?: [A-Z][a-zA-Z]+)+$/),
+        ],
+      ],
+      email: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern(
+            /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+          ),
+        ],
+      ],
       password: [
         '',
         [
@@ -49,27 +63,25 @@ export class RegisterComponent {
       const lastUrl = localStorage.getItem('lastUrl');
 
       this.http
-        .post('http://localhost:3000/user', userData, httpOptions)
+        .post('http://192.168.0.13:3000/user', userData, httpOptions)
         .subscribe(
           async (res: any) => {
             this.http
-              .post('http://localhost:3000/auth/login', {
+              .post('http://192.168.0.13:3000/auth/login', {
                 email: userData.email,
                 password: userData.password,
               })
-              .subscribe(
-                (res: any) => {
-                  localStorage.setItem('token', res.accessToken);
-                },
-                (err) => {
-                  this.error =
-                    'Ocorreu um erro durante o login após o registro. Por favor, tente novamente mais tarde.';
-                }
-              );
-              this.router.navigate([lastUrl]);
+              .subscribe((res: any) => {
+                localStorage.setItem('token', res.accessToken);
+              });
+            this.router.navigate([lastUrl]);
           },
           (error) => {
-            this.error = error;
+            if (error.error.message === 'Email already in use') {
+              this.error = 'Este email já está sendo utilizado.';
+            } else {
+              this.error = 'Ocorreu um erro, tente novamente mais tarde.';
+            }
           }
         );
     }
@@ -77,6 +89,10 @@ export class RegisterComponent {
 
   back() {
     const lastUrl = localStorage.getItem('lastUrl');
-    this.router.navigate([lastUrl]);
+    if (lastUrl) {
+      this.router.navigate([lastUrl]);
+    } else {
+      this.router.navigate(['/products']);
+    }
   }
 }

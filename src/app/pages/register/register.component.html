@@ -19,6 +19,12 @@
                 class="form-control"
                 formControlName="name"
               />
+              <div
+                *ngIf="form.get('name')?.hasError('pattern')"
+                class="alert alert-danger mt-2"
+              >
+                Use um formato de nome válido (primera letra maiúscula e pelo menos um sobrenome).
+              </div>
             </div>
             <div class="form-group">
               <label for="email">Email:</label>
@@ -28,6 +34,12 @@
                 class="form-control"
                 formControlName="email"
               />
+              <div
+                *ngIf="form.get('email')?.hasError('pattern')"
+                class="alert alert-danger mt-2"
+              >
+                Use um formato de email válido.
+              </div>
             </div>
             <div class="form-group">
               <label for="password">Senha:</label>
@@ -39,7 +51,7 @@
               />
               <div
                 *ngIf="form.get('password')?.hasError('pattern')"
-                class="text-danger"
+                class="alert alert-danger mt-2"
               >
                 A senha deve conter pelo menos 8 caracteres, incluindo uma letra
                 maiúscula, uma letra minúscula e um número.

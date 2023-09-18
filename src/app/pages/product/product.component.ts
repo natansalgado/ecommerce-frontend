@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-product',
@@ -18,7 +18,11 @@ export class ProductComponent implements OnInit {
 
   errorMessage = '';
 
-  constructor(private route: ActivatedRoute, private http: HttpClient) {}
+  constructor(
+    private route: ActivatedRoute,
+    private http: HttpClient,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.getApi();
@@ -29,7 +33,7 @@ export class ProductComponent implements OnInit {
     this.route.params.subscribe(async (params) => {
       try {
         this.product = await this.http
-          .get<any>(`http://localhost:3000/product/${params['id']}`)
+          .get<any>(`http://192.168.0.13:3000/product/${params['id']}`)
           .toPromise();
         this.checkIfProductIsInCart();
       } catch (error) {}
@@ -45,7 +49,7 @@ export class ProductComponent implements OnInit {
       });
 
       this.http
-        .get(`http://localhost:3000/cart/product/${this.product.id}`, {
+        .get(`http://192.168.0.13:3000/cart/product/${this.product.id}`, {
           headers,
         })
         .subscribe(
@@ -68,7 +72,7 @@ export class ProductComponent implements OnInit {
       });
 
       this.http
-        .get('http://localhost:3000/auth/profile', {
+        .get('http://192.168.0.13:3000/auth/profile', {
           headers,
         })
         .subscribe(
@@ -102,7 +106,7 @@ export class ProductComponent implements OnInit {
     };
 
     this.http
-      .post('http://localhost:3000/cart/add', body, { headers })
+      .post('http://192.168.0.13:3000/cart/add', body, { headers })
       .subscribe(
         (response) => {
           this.addedQuantity = this.quantity;

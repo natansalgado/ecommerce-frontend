@@ -14,7 +14,6 @@ export class ProductsComponent implements OnInit {
   ngOnInit(): void {
     this.productService.getProducts().subscribe((data) => {
       this.products = data.map((product: any) => {
-        product.image_urls = product.image_urls.split(',');
         return product;
       });
     });

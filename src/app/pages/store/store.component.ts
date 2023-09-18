@@ -16,7 +16,7 @@ export class StoreComponent {
     this.route.params.subscribe(async (params) => {
       try {
         this.store = await this.http
-          .get<any>(`http://localhost:3000/store/${params['id']}`)
+          .get<any>(`http://192.168.0.13:3000/store/${params['id']}`)
           .toPromise();
       } catch (error) {}
     });

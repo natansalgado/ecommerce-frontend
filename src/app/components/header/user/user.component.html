@@ -18,28 +18,27 @@
       <i class="fa fa-angle-down"></i>
     </button>
     <div
-      style="right: 0; top: 100%; z-index: 100"
+      style="right: 0; top: 100%"
       class="position-absolute bg-dark text-uppercase"
     >
-      <div
-        class="collapse p-2"
-        id="collapseExample"
-        style="gap: 0; top: 100%; z-index: 100"
-      >
+      <div class="collapse p-2" id="collapseExample">
         <ul class="nav flex-column">
-          <li class="nav-item hover">
+          <li class="nav-item menu-item py-1">
             <a class="nav-link active text-white" href="cart"
-              ><i class="fa fa-shopping-cart"></i> carrinho</a
+              ><i class="fa fa-shopping-cart mr-2"></i> carrinho</a
             >
           </li>
-          <li class="nav-item hover">
-            <a
-              class="nav-link active text-white border-top border-secondary"
-              href="#"
-              ><i class="fa fa-gear"></i> configurações</a
+          <li class="nav-item menu-item border-top border-secondary py-1">
+            <a class="nav-link active text-white" href="cart">
+              <i class="fa fa-shopping-bag mr-2"></i> minha loja
+            </a>
+          </li>
+          <li class="nav-item menu-item border-top border-secondary py-1">
+            <a class="nav-link active text-white" href="#">
+              <i class="fa fa-gear mr-2"></i> configurações</a
             >
           </li>
-          <button (click)="quit()" class="btn btn-danger">SAIR</button>
+          <button (click)="quit()" class="btn btn-danger mt-2">SAIR</button>
         </ul>
       </div>
     </div>
