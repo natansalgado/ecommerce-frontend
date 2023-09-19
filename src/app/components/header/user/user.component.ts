@@ -1,6 +1,6 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
+import { Router } from '@angular/router';
+import { UserService } from './user.service';
 
 @Component({
   selector: 'app-user',
@@ -8,29 +8,15 @@ import { NavigationEnd, Router } from '@angular/router';
   styleUrls: ['./user.component.css'],
 })
 export class UserComponent implements OnInit {
-  user: any = null;
+  userService = this.userServiceConstructor;
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(
+    private router: Router,
+    private userServiceConstructor: UserService
+  ) {}
 
   ngOnInit(): void {
-    const authToken = localStorage.getItem('token');
-
-    if (authToken) {
-      const headers = new HttpHeaders({
-        Authorization: `Bearer ${authToken}`,
-      });
-
-      this.http
-        .get('http://192.168.0.13:3000/auth/profile', { headers })
-        .subscribe(
-          (data: any) => {
-            this.user = data;
-          },
-          (error) => {
-            localStorage.removeItem('token');
-          }
-        );
-    }
+    this.userService.getUser();
   }
 
   quit() {
