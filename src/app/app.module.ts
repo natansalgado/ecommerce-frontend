@@ -15,6 +15,7 @@ import { ProductComponent } from './pages/product/product.component';
 import { StoreComponent } from './pages/store/store.component';
 import { CartComponent } from './pages/cart/cart.component';
 import { SettingsComponent } from './pages/settings/settings.component';
+import { HistoricComponent } from './pages/historic/historic.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { SettingsComponent } from './pages/settings/settings.component';
     StoreComponent,
     CartComponent,
     SettingsComponent,
+    HistoricComponent,
   ],
   imports: [
     BrowserModule,

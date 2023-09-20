@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
-import { ProductsService } from '../products/products.service';
 import { ActivatedRoute, Route } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-store',
   templateUrl: './store.component.html',
+  styleUrls: ['../products/products.style.css'],
 })
 export class StoreComponent {
   store: any = null;

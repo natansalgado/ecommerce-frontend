@@ -1,14 +1,14 @@
-<div *ngIf="product" class="mb-5">
-  <div class="container mt-5 mb-5">
+<div *ngIf="product">
+  <div class="container mb-5">
     <div class="row">
-      <div class="col-md-6">
+      <div class="col-md-6 mt-5">
         <img
           src="{{ product.image_url }}"
           alt="{{ product.title }}"
           class="img-fluid border mb-2 p-2 w-100 pointer"
         />
       </div>
-      <div class="col-md-6">
+      <div class="col-md-6 mt-5">
         <h1>{{ product.title }}</h1>
         <p>{{ product.description }}</p>
         <p>
@@ -18,11 +18,30 @@
           }}</a>
         </p>
 
+        <div *ngIf="product.ratings > 0" class="rating d-flex mb-2">
+          <span
+            *ngFor="let star of [1, 2, 3, 4, 5]"
+            [ngClass]="{
+              filled: star <= calcRoundedStars(product.stars, product.ratings)
+            }"
+          >
+            <i class="fa fa-star"></i>
+          </span>
+          <p class="mx-2 mb-1">
+            {{ calcStars(product.stars, product.ratings) | number : "1.1-1" }}
+          </p>
+        </div>
+        <p>
+          <span class="text-truncate"> {{ product.ratings }} avaliações </span>
+          -
+          <span class="text-truncate"> {{ product.sold }} vendidos</span>
+        </p>
+
         <p>
           <strong>R$ {{ product.price | number : "1.2-2" }}</strong>
         </p>
         <p>
-          Disponivel:
+          Disponível:
           <span class="text-success">{{ product.quantity }} unidades</span>
         </p>
 
@@ -98,7 +117,7 @@
             <i class="fa fa-shopping-cart"></i> Ir para carrinho
           </a>
 
-          <a href="/products" class="btn btn-primary">
+          <a href="/products" class="btn btn-info">
             <i class="fa fa-search"></i> Continuar pesquisando
           </a>
         </div>

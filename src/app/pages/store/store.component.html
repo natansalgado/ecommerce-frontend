@@ -12,19 +12,20 @@
         *ngFor="let product of store.products"
         class="col-xl-3 col-lg-4 col-md-6 col-sm-6 mb-4"
       >
-        <div class="card">
-          <img
-            src="{{ product.image_url }}"
-            alt="Produto 1"
-            class="card-img-top fixed-size-image p-1"
-            style="height: 230px; object-fit: contain"
-          />
+        <div class="card h-100">
+          <a href="/product/{{ product.id }}">
+            <img
+              src="{{ product.image_url }}"
+              alt="Produto 1"
+              class="card-img-top fixed-size-image p-1"
+              style="height: 230px; object-fit: contain"
+            />
+          </a>
           <div class="card-body">
-            <h5
-              class="card-title d-inline-block text-truncate m-0"
-              style="max-width: 100%"
-            >
-              {{ product.title }}
+            <h5>
+              <a href="/product/{{ product.id }}" class="text-body text-lg">
+                {{ product.title }}
+              </a>
             </h5>
             <p class="m-0">
               <strong>R$ {{ product.price | number : "1.2-2" }}</strong>
@@ -45,7 +46,6 @@
                 }}
               </p>
             </div>
-            <p *ngIf="product.ratings <= 0" class="mb-1">sem avaliações</p>
             <p class="mb-1">
               <span class="text-truncate">
                 {{ product.ratings }} avaliações
@@ -53,12 +53,6 @@
               -
               <span class="text-truncate"> {{ product.sold }} vendidos</span>
             </p>
-            <a
-              href="#"
-              [routerLink]="['/product', product.id]"
-              class="btn btn-primary mt-2"
-              >Ver Detalhes</a
-            >
           </div>
         </div>
       </div>

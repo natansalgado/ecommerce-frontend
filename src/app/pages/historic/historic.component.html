@@ -1,0 +1,85 @@
+<div class="container mt-5">
+  <h1 class="mb-0">Hitórico de Compras</h1>
+
+  <ul
+    *ngIf="historic && historic.length > 0"
+    class="list-group"
+    style="list-style: none"
+  >
+    <li *ngFor="let purchase of historic" class="">
+      <ul class="list-group mt-5 list-group-item list-group-flush rounded">
+        <h4 class="mt-2 border-bottom pb-3 mb-0">
+          Compra efetuada dia {{ purchase.created_at | date : "dd/MM/yyyy" }}
+        </h4>
+        <li
+          *ngFor="let item of purchase.historic_items"
+          class="list-group-item"
+        >
+          <div class="row">
+            <div class="col-md-2">
+              <a href="/product/{{ item.product_id }}">
+                <img
+                  src="{{ item.product.image_url }}"
+                  alt="{{ item.product.title }}"
+                  class="img-thumbnail"
+                />
+              </a>
+            </div>
+
+            <div class="col-md-4">
+              <h4 class="list-group-item-heading">
+                <a href="/product/{{ item.product_id }}" class="text-body">
+                  {{ item.product.title }}
+                </a>
+              </h4>
+            </div>
+
+            <div class="col-md-2">
+              <p class="list-group-item-text mb-0">
+                <strong>Preço de cada:</strong>
+              </p>
+              <p class="mb-0 py-1 px-2 border rounded bg-light text-center">
+                R$ {{ item.product.price | number : "1.2-2" }}
+              </p>
+            </div>
+
+            <div class="col-md-2">
+              <p class="list-group-item-text mb-0">
+                <strong>Preço total:</strong>
+              </p>
+              <p class="mb-0 py-1 px-2 border rounded bg-light text-center">
+                R$ {{ item.product.price * item.quantity | number : "1.2-2" }}
+              </p>
+            </div>
+
+            <div class="col-md-2">
+              <p class="list-group-item-text mb-0">
+                <strong>Quantidade:</strong>
+              </p>
+              <p class="mb-0 py-1 px-2 border rounded bg-light text-center">
+                {{ item.quantity }}
+              </p>
+            </div>
+          </div>
+        </li>
+        <div class="p-3 row mx-0">
+          <div class="col-lg-3 col-md-5 mt-0">
+            <p class="mb-0"><strong>Valor total da compra:</strong></p>
+            <p
+              class="text-nowrap py-2 px-3 border rounded bg-light mb-0 text-center"
+            >
+              R$ {{ purchase.total_price | number : "1.2-2" }}
+            </p>
+          </div>
+
+          <div class="col-lg-4 col-md-6">
+            <p class="mb-0"><strong>Status de entrega:</strong></p>
+            <p class="py-2 px-3 border rounded bg-light mb-0 text-center">
+              Recebido pela transportadora
+            </p>
+          </div>
+        </div>
+      </ul>
+    </li>
+  </ul>
+</div>

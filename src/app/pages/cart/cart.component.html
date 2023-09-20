@@ -7,7 +7,7 @@
         Esvaziar carrinho
       </button>
     </div>
-    <li *ngFor="let item of cart.cartItems" class="list-group-item">
+    <li *ngFor="let item of cart.cartItems" class="list-group-item rounded">
       <div class="row">
         <div class="col-md-2">
           <a href="/product/{{ item.product_id }}">
@@ -31,7 +31,7 @@
           <p class="list-group-item-text mb-0">
             <strong>Preço de cada:</strong>
           </p>
-          <p class="mb-0 py-1 px-2 border rounded">
+          <p class="mb-0 py-1 px-2 border rounded text-center">
             R$ {{ item.product.price | number : "1.2-2" }}
           </p>
         </div>
@@ -40,23 +40,23 @@
           <p class="list-group-item-text mb-0">
             <strong>Preço total:</strong>
           </p>
-          <p class="mb-0 py-1 px-2 border rounded d-block">
+          <p class="mb-0 py-1 px-2 border rounded d-block text-center">
             R$ {{ item.product.price * item.quantity | number : "1.2-2" }}
           </p>
         </div>
 
-        <div class="col-md-2 text-left">
+        <div class="col-md-2">
           <p class="list-group-item-text mb-0">
             <strong>Quantidade:</strong>
           </p>
-          <div class="d-flex">
+          <div class="d-flex justify-content-center">
             <button
               (click)="changeQuantity(item.product_id, -1)"
               class="btn py-1 px-2 border mr-1"
             >
               -
             </button>
-            <p class="mb-0 py-1 px-2 border rounded">
+            <p class="mb-0 py-1 px-2 border rounded text-center">
               {{ item.quantity }}
             </p>
             <button
@@ -67,12 +67,14 @@
               +
             </button>
           </div>
-          <button
-            (click)="changeQuantity(item.product_id, -item.quantity)"
-            class="btn btn-danger mt-1"
-          >
-            Remover Item
-          </button>
+          <div class="text-center">
+            <button
+              (click)="changeQuantity(item.product_id, -item.quantity)"
+              class="btn btn-danger mt-1"
+            >
+              Remover Item
+            </button>
+          </div>
         </div>
       </div>
     </li>
@@ -89,7 +91,7 @@
       <strong>{{ error }}</strong>
     </div>
     <div class="text-end mt-3">
-      <a href="/products" class="btn btn-primary mr-2 mt-2">
+      <a href="/products" class="btn btn-info mr-2 mt-2">
         <i class="fa fa-search"></i>
         Continuar pesquisando
       </a>
@@ -104,7 +106,7 @@
     <div class="text-end">
       <h5>Carrinho vazio...</h5>
     </div>
-    <a href="/products" class="btn btn-primary">
+    <a href="/products" class="btn btn-info">
       <i class="fa fa-search"></i> Continuar pesquisando
     </a>
   </div>

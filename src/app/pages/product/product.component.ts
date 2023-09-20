@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 @Component({
   selector: 'app-product',
   templateUrl: './product.component.html',
+  styleUrls: ['../products/products.style.css']
 })
 export class ProductComponent implements OnInit {
   product: any = null;
@@ -123,5 +124,13 @@ export class ProductComponent implements OnInit {
           }
         }
       );
+  }
+
+  calcRoundedStars(stars1: any, ratings: any) {
+    return Math.round(stars1 / ratings);
+  }
+
+  calcStars(stars1: any, ratings: any) {
+    return stars1 / ratings;
   }
 }
