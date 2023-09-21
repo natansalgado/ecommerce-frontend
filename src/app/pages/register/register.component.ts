@@ -40,6 +40,7 @@ export class RegisterComponent {
           Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/),
         ],
       ],
+      repeatPassword: [''],
       address: ['', Validators.required],
     });
   }
@@ -53,28 +54,20 @@ export class RegisterComponent {
   }
 
   register(): void {
-    if (this.form.valid) {
-      const userData = this.form.value;
+    if (this.form.valid && !this.checkPassword()) {
+      const userData = { ...this.form.value };
+
+      userData.repeatPassword = undefined;
 
       const httpOptions = {
         headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
       };
 
-      const lastUrl = localStorage.getItem('lastUrl');
-
       this.http
         .post('http://192.168.0.13:3000/user', userData, httpOptions)
         .subscribe(
-          async (res: any) => {
-            this.http
-              .post('http://192.168.0.13:3000/auth/login', {
-                email: userData.email,
-                password: userData.password,
-              })
-              .subscribe((res: any) => {
-                localStorage.setItem('token', res.accessToken);
-              });
-            this.router.navigate([lastUrl]);
+          (res: any) => {
+            this.login();
           },
           (error) => {
             if (error.error.message === 'Email already in use') {
@@ -87,6 +80,30 @@ export class RegisterComponent {
     }
   }
 
+  login(): void {
+    const loginData = {
+      email: this.form.value.email,
+      password: this.form.value.password,
+    };
+
+    this.http
+      .post<any>('http://192.168.0.13:3000/auth/login', loginData)
+      .subscribe(
+        (res: any) => {
+          localStorage.setItem('token', res.accessToken);
+          this.back();
+        },
+        (err) => {
+          if (err.error.message === 'Invalid email or password') {
+            this.error = 'Usuário ou senha inválido.';
+          } else {
+            this.error =
+              'Problemas ao tentar acessar o servidor, tente novamente mais tarde.';
+          }
+        }
+      );
+  }
+
   back() {
     const lastUrl = localStorage.getItem('lastUrl');
     if (lastUrl) {
@@ -94,5 +111,11 @@ export class RegisterComponent {
     } else {
       this.router.navigate(['/products']);
     }
+  }
+
+  checkPassword() {
+    if (this.form.value.password !== this.form.value.repeatPassword) {
+      return true;
+    } else return false;
   }
 }

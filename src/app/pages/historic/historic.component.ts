@@ -24,11 +24,11 @@ export class HistoricComponent {
           this.historic = res;
         },
         (err) => {
-          this.router.navigate(['login']);
+          if (err.error.statusCode === 401) this.router.navigate(['/login']);
         }
       );
     } else {
-      this.router.navigate(['login']);
+      this.router.navigate(['/login']);
     }
   }
 }

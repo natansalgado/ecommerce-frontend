@@ -2,48 +2,115 @@
   <h1>Configurações</h1>
   <div class="card mt-4">
     <div class="card-body">
-      <h2>Editar Informações Pessoais</h2>
+      <h2 class="mb-4">Editar Informações Pessoais</h2>
       <button
         *ngIf="opened != 'infos'"
         (click)="setOpened('infos')"
-        class="btn btn-primary mt-3"
+        class="btn btn-primary"
       >
         Editar Perfil
       </button>
-      <form *ngIf="opened == 'infos'">
-        <div class="mb-3">
-          <label for="name" class="form-label mt-4">Nome</label>
+      <form
+        *ngIf="opened == 'infos' && form"
+        [formGroup]="form"
+        (submit)="verifyAccount()"
+        class="p-0 rounded"
+      >
+        <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+        <div class="form-group">
+          <label for="name">Nome:</label>
           <input
             type="text"
-            class="form-control"
             id="name"
-            value="{{ user.name }}"
+            class="form-control"
+            formControlName="name"
           />
+          <div
+            *ngIf="form.get('name')?.hasError('pattern')"
+            class="alert alert-danger mt-2"
+          >
+            <strong>
+              Use um formato de nome válido (primera letra maiúscula e pelo
+              menos um sobrenome e sem acentos).
+            </strong>
+          </div>
         </div>
-        <div class="mb-3">
-          <label for="email" class="form-label">Email</label>
+        <div class="form-group">
+          <label for="email">Email:</label>
           <input
             type="email"
-            class="form-control"
             id="email"
-            value="{{ user.email }}"
-          />
-        </div>
-        <div class="mb-3">
-          <label for="password" class="form-label">Senha</label>
-          <input type="password" class="form-control" id="password" />
-        </div>
-        <div class="mb-3">
-          <label for="address" class="form-label">Endereço</label>
-          <input
-            type="text"
             class="form-control"
-            id="address"
-            value="{{ user.address }}"
+            formControlName="email"
           />
+          <div
+            *ngIf="form.get('email')?.hasError('pattern')"
+            class="alert alert-danger mt-2"
+          >
+            <strong>Use um formato de email válido.</strong>
+          </div>
         </div>
-        <button type="submit" class="btn btn-primary">
-          Atualizar informações
+        <div class="form-group">
+          <label for="password"
+            >Nova senha (caso não queira troca-la, deixe o campo vazio):</label
+          >
+          <input
+            type="password"
+            id="password"
+            class="form-control"
+            formControlName="password"
+          />
+          <div
+            *ngIf="form.get('password')?.hasError('pattern')"
+            class="alert alert-danger mt-2"
+          >
+            <strong>
+              A senha deve conter pelo menos 8 caracteres, incluindo uma letra
+              maiúscula, uma letra minúscula e um número.
+            </strong>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="repeatPassword">Repita a senha:</label>
+          <input
+            type="password"
+            id="repeatPassword"
+            class="form-control"
+            formControlName="repeatPassword"
+          />
+          <div *ngIf="checkPasswords()" class="alert alert-danger mt-2">
+            <strong>Repita a senha usada acima.</strong>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="address">Endereço:</label>
+          <input id="address" class="form-control" formControlName="address" />
+        </div>
+        <div class="form-group">
+          <label for="currentPassword">Digite sua senha atual:</label>
+          <input
+            type="password"
+            id="currentPassword"
+            class="form-control"
+            formControlName="currentPassword"
+            (input)="currentPassword = true"
+          />
+          <div *ngIf="!currentPassword" class="alert alert-danger mt-2">
+            <strong>Senha incorreta.</strong>
+          </div>
+        </div>
+        <div *ngIf="successMessage" class="alert alert-success mt-2">
+          <strong>
+            {{ successMessage }}
+          </strong>
+        </div>
+        <button
+          [disabled]="!canSave()"
+          type="submit"
+          class="btn btn-success mt-2"
+        >
+          Salvar alterações
         </button>
       </form>
     </div>

@@ -23,7 +23,10 @@
                 *ngIf="form.get('name')?.hasError('pattern')"
                 class="alert alert-danger mt-2"
               >
-                Use um formato de nome válido (primera letra maiúscula e pelo menos um sobrenome).
+                <strong>
+                  Use um formato de nome válido (primera letra maiúscula, pelo
+                  menos um sobrenome e sem acentos).
+                </strong>
               </div>
             </div>
             <div class="form-group">
@@ -38,7 +41,7 @@
                 *ngIf="form.get('email')?.hasError('pattern')"
                 class="alert alert-danger mt-2"
               >
-                Use um formato de email válido.
+                <strong>Use um formato de email válido.</strong>
               </div>
             </div>
             <div class="form-group">
@@ -53,8 +56,22 @@
                 *ngIf="form.get('password')?.hasError('pattern')"
                 class="alert alert-danger mt-2"
               >
-                A senha deve conter pelo menos 8 caracteres, incluindo uma letra
-                maiúscula, uma letra minúscula e um número.
+                <strong>
+                  A senha deve conter pelo menos 8 caracteres, incluindo uma
+                  letra maiúscula, uma letra minúscula e um número.
+                </strong>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="repeatPassword">Senha:</label>
+              <input
+                type="password"
+                id="repeatPassword"
+                class="form-control"
+                formControlName="repeatPassword"
+              />
+              <div *ngIf="checkPassword()" class="alert alert-danger mt-2">
+                <strong>Repita a senha usada acima.</strong>
               </div>
             </div>
             <div class="form-group">
@@ -66,7 +83,22 @@
               />
             </div>
             <div class="text-center d-flex flex-column">
-              <button type="submit" class="btn btn-primary mt-2">
+              <button
+                type="submit"
+                [disabled]="
+                  !form.value.name ||
+                  form.get('name')?.hasError('pattern') ||
+                  !form.value.email ||
+                  form.get('email')?.hasError('pattern') ||
+                  !form.value.repeatPassword ||
+                  !form.value.password ||
+                  form.get('password')?.hasError('pattern') ||
+                  !form.value.address ||
+                  form.get('address')?.hasError('pattern') ||
+                  checkPassword()
+                "
+                class="btn btn-primary mt-2"
+              >
                 Registrar
               </button>
               <a class="mt-2" href="/login"

@@ -1,5 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UserService } from 'src/app/components/header/user/user.service';
 
@@ -8,6 +9,9 @@ import { UserService } from 'src/app/components/header/user/user.service';
   templateUrl: './settings.component.html',
 })
 export class SettingsComponent implements OnInit {
+  form: FormGroup | null = null;
+  error: string = '';
+
   user: any = null;
   cards: any = [];
   value = 0;
@@ -16,15 +20,19 @@ export class SettingsComponent implements OnInit {
   depositSuccessMessage = '';
   verifying = false;
 
+  currentPassword = true;
+  successMessage = '';
+
   constructor(
     private http: HttpClient,
     private router: Router,
-    private userService: UserService
+    private userService: UserService,
+    private fb: FormBuilder
   ) {}
 
   ngOnInit(): void {
-    this.getUser();
     this.generateCard();
+    this.getUser();
   }
 
   getUser() {
@@ -40,6 +48,7 @@ export class SettingsComponent implements OnInit {
         .subscribe(
           (data: any) => {
             this.user = data;
+            this.createForm();
           },
           (error) => {
             localStorage.removeItem('token');
@@ -49,6 +58,126 @@ export class SettingsComponent implements OnInit {
     } else {
       this.router.navigate(['/products']);
     }
+  }
+
+  createForm() {
+    this.form = this.fb.group({
+      name: [
+        this.user.name,
+        [
+          Validators.required,
+          Validators.pattern(/^[A-Z][a-zA-Z]+(?: [A-Z][a-zA-Z]+)+$/),
+        ],
+      ],
+      email: [
+        this.user.email,
+        [
+          Validators.required,
+          Validators.pattern(
+            /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+          ),
+        ],
+      ],
+      password: [
+        '',
+        [Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/)],
+      ],
+      repeatPassword: [''],
+      address: [this.user.address, Validators.required],
+      currentPassword: [''],
+    });
+  }
+
+  verifyAccount() {
+    const loginData = {
+      email: this.user.email,
+      password: this.form?.value.currentPassword,
+    };
+
+    this.http
+      .post<any>('http://192.168.0.13:3000/auth/login', loginData)
+      .subscribe(
+        (res: any) => {
+          this.update();
+          this.currentPassword = true;
+          this.successMessage = 'perfil atualizado com sucesso.';
+        },
+        (err) => {
+          if (err.error.message === 'Invalid email or password') {
+            this.currentPassword = false;
+            this.successMessage = '';
+          } else {
+            this.error =
+              'Problemas ao tentar acessar o servidor, tente novamente mais tarde.';
+          }
+        }
+      );
+  }
+
+  update() {
+    if (this.form?.valid) {
+      if (
+        this.form?.value.password &&
+        this.form?.value.password !== this.form?.value.repeatPassword
+      ) {
+        return;
+      }
+
+      if (this.form?.value.repeatPassword && !this.form?.value.password) {
+        return;
+      }
+
+      const authToken = localStorage.getItem('token');
+
+      if (authToken) {
+        const headers = new HttpHeaders({
+          Authorization: `Bearer ${authToken}`,
+        });
+
+        const data = { ...this.form.value };
+
+        data.repeatPassword = undefined;
+        data.currentPassword = undefined;
+
+        this.http
+          .put(`http://192.168.0.13:3000/user/${this.user.id}`, data, {
+            headers,
+          })
+          .subscribe(
+            (res) => {
+              this.form?.get('password')?.setValue('');
+              this.form?.get('repeatPassword')?.setValue('');
+              this.form?.get('currentPassword')?.setValue('');
+              this.userService.getUser();
+            },
+            (err) => {
+              if (err.error.statusCode === 401)
+                this.router.navigate(['/login']);
+            }
+          );
+      } else {
+        this.router.navigate(['/login']);
+      }
+    }
+  }
+
+  canSave() {
+    if (
+      (this.form?.value.name === this.user.name &&
+        this.form?.value.email === this.user.email &&
+        this.form?.value.address === this.user.address) ||
+      !this.form?.value.currentPassword
+    ) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  checkPasswords() {
+    if (this.form?.value.password !== this.form?.value.repeatPassword)
+      return true;
+    else return false;
   }
 
   setOpened(opened: string) {

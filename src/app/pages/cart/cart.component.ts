@@ -28,8 +28,8 @@ export class CartComponent implements OnInit {
         (response) => {
           this.cart = response;
         },
-        (error) => {
-          this.router.navigate(['/login']);
+        (err) => {
+          if (err.error.statusCode === 401) this.router.navigate(['/login']);
         }
       );
     } else {
@@ -50,10 +50,12 @@ export class CartComponent implements OnInit {
       this.http
         .post('http://192.168.0.13:3000/cart/add', body, { headers })
         .subscribe(
-          (res) => {
+          () => {
             this.getCartFromApi();
           },
-          (error) => {}
+          (err) => {
+            if (err.error.statusCode === 401) this.router.navigate(['/login']);
+          }
         );
     } else {
       this.router.navigate(['/login']);
@@ -89,8 +91,7 @@ export class CartComponent implements OnInit {
       this.http
         .post('http://192.168.0.13:3000/historic', {}, { headers })
         .subscribe(
-          (res) => {
-            console.log(res);
+          () => {
             this.getCartFromApi();
             this.error = null;
           },

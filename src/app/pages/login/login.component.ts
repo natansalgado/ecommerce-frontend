@@ -27,8 +27,6 @@ export class LoginComponent {
       password: this.password,
     };
 
-    const lastUrl = localStorage.getItem('lastUrl');
-
     this.http
       .post<any>('http://192.168.0.13:3000/auth/login', loginData)
       .subscribe(
