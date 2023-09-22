@@ -94,16 +94,20 @@ export class CartComponent implements OnInit {
           () => {
             this.getCartFromApi();
             this.error = null;
+            localStorage.setItem('bought', 'true');
+            this.router.navigate(['/historic']);
           },
           (err) => {
             if ((err.error.message = 'Insufficient funds')) {
               this.error =
                 'Saldo da conta insuficiente. Faça um depósito para poder finalizar a compra.';
+            } else if (err.error.statusCode == 401) {
+              this.router.navigate(['/login']);
             } else {
               this.error = 'Erro ao tentar se conectar com o servidor.';
             }
           }
         );
-    }
+    } else this.router.navigate(['/login']);
   }
 }

@@ -40,12 +40,18 @@
         <p>
           <strong>R$ {{ product.price | number : "1.2-2" }}</strong>
         </p>
-        <p>
+        <p *ngIf="product.quantity > 0">
           Disponível:
           <span class="text-success">{{ product.quantity }} unidades</span>
         </p>
+        <p *ngIf="product.quantity <= 0" class="text-danger">
+          Produto indisponível
+        </p>
 
-        <div class="d-flex align-items-center mb-3">
+        <div
+          *ngIf="product.quantity > 0"
+          class="d-flex align-items-center mb-3"
+        >
           <p class="m-0">Quantidade:</p>
           <div class="d-flex align-items-center ml-2">
             <button
@@ -68,7 +74,7 @@
           </div>
         </div>
 
-        <p>
+        <p *ngIf="product.quantity > 0">
           Total:
           <strong>R$ {{ product.price * quantity | number : "1.2-2" }}</strong>
         </p>
@@ -104,27 +110,30 @@
           </p>
         </div>
 
+        <p *ngIf="!isLogged" class="text-danger">
+          Faça o login para poder adicionar o produto ao carrinho.
+        </p>
         <div class="d-flex flex-column">
           <button
-            *ngIf="isLogged"
+            [disabled]="!isLogged || product.quantity <= 0"
             (click)="addToCart()"
             class="btn btn-success mb-2"
           >
             <i class="fa fa-shopping-cart"></i> Adicionar ao Carrinho
           </button>
 
-          <a *ngIf="isLogged" href="/cart" class="btn btn-primary mb-2">
+          <button
+            [disabled]="!isLogged"
+            [routerLink]="'/cart'"
+            class="btn btn-primary mb-2"
+          >
             <i class="fa fa-shopping-cart"></i> Ir para carrinho
-          </a>
+          </button>
 
           <a href="/products" class="btn btn-info">
             <i class="fa fa-search"></i> Continuar pesquisando
           </a>
         </div>
-
-        <p *ngIf="!isLogged" class="text-danger">
-          Faça o login para poder adicionar o produto ao carrinho.
-        </p>
       </div>
     </div>
   </div>

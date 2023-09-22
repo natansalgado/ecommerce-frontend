@@ -5,7 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 @Component({
   selector: 'app-product',
   templateUrl: './product.component.html',
-  styleUrls: ['../products/products.style.css']
+  styleUrls: ['../products/products.style.css'],
 })
 export class ProductComponent implements OnInit {
   product: any = null;
@@ -106,6 +106,11 @@ export class ProductComponent implements OnInit {
       quantity: Number(this.quantity),
     };
 
+    if (this.quantity > this.product.quantity) {
+      this.errorMessage = 'Este produto não possui unidades o suficiente!';
+      return;
+    }
+
     this.http
       .post('http://192.168.0.13:3000/cart/add', body, { headers })
       .subscribe(
@@ -116,12 +121,15 @@ export class ProductComponent implements OnInit {
           this.getApi();
         },
         (error) => {
-          console.error(error);
-          if (error.error.message === 'Insuficient product quantity') {
+          if (error.error.message == 'Insuficient product quantity') {
             this.errorMessage =
               'Este produto não possui unidades o suficiente!';
-            this.added = false;
+          } else if (error.error.statusCode == 401) {
+            this.errorMessage = 'Faça o login para poder adicionar ao carrinho!';
+          } else {
+            this.errorMessage = error.error.message;
           }
+          this.added = false;
         }
       );
   }

@@ -1,6 +1,10 @@
 <div class="container mt-5">
   <h1 class="mb-0">Hitórico de Compras</h1>
 
+  <h5 *ngIf="bought" class="alert alert-success mt-4" style="margin-bottom: -45px">
+    <strong>Compra efetuada com sucesso!</strong>
+  </h5>
+
   <ul
     *ngIf="historic && historic.length > 0"
     class="list-group"

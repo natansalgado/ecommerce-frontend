@@ -8,10 +8,16 @@ import { Router } from '@angular/router';
 })
 export class HistoricComponent {
   historic: any = null;
+  bought = false;
 
   constructor(private http: HttpClient, private router: Router) {}
 
   ngOnInit() {
+    if (localStorage.getItem('bought')) {
+      localStorage.removeItem('bought');
+      this.bought = true;
+    }
+
     const token = localStorage.getItem('token');
 
     if (token) {
