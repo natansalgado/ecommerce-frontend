@@ -4,8 +4,12 @@
 
 <div *ngIf="userService.user">
   <div class="d-flex flex-row align-items-center justify-content-end">
-    <h5 class="text-light m-0 mr-2">Olá, {{ userService.user.name }}</h5>
-    <p class="text-light m-0">R$ {{ userService.user.balance | number : "1.2-2" }}</p>
+    <p class="text-light m-0 mr-2">
+      Olá, <strong>{{ userService.user.name }}</strong>
+    </p>
+    <p class="text-light m-0">
+      R$ {{ userService.user.balance | number : "1.2-2" }}
+    </p>
 
     <button
       class="btn btn-secondary ml-2"
@@ -34,7 +38,7 @@
             >
           </li>
           <li class="nav-item menu-item border-top border-secondary py-1">
-            <a class="nav-link active text-white" href="products">
+            <a class="nav-link active text-white" href="mystore">
               <i class="fa fa-shopping-bag mr-2"></i> minha loja
             </a>
           </li>

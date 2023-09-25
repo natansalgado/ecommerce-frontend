@@ -1,0 +1,62 @@
+<div *ngIf="!store" class="container mt-5">
+  <h2>Você não possui uma loja!</h2>
+  <button class="btn btn-primary">Criar Loja</button>
+</div>
+
+<div *ngIf="store" class="container mt-5">
+  <h1>{{ store.name }}</h1>
+  <h3>Todos os meus produtos</h3>
+
+  <ul class="list-group mt-3">
+    <li
+      *ngFor="let product of store.products"
+      class="row border rounded mt-2 py-3 mx-0"
+    >
+      <div class="col-md-2">
+        <img
+          src="{{ product.image_url }}"
+          alt="{{ product.title }}"
+          style="max-height: 88px; object-fit: contain"
+          class="w-100"
+        />
+      </div>
+
+      <div class="col-md-5">
+        <h4>{{ product.title }}</h4>
+      </div>
+
+      <div class="text-start col-md-3">
+        <p class="mb-0">
+          <strong>R$ {{ product.price | number : "1.2-2" }}</strong>
+        </p>
+        <p class="mb-0">
+          <strong>{{ product.sold }}</strong> vendidos
+        </p>
+        <p class="mb-0">
+          <strong>{{ product.quantity }}</strong> unidades
+        </p>
+        <p class="mb-0">
+          <span *ngIf="product.ratings">
+            <strong>
+              {{ product.stars / product.ratings | number : "1.1-1" }}
+            </strong>
+            <i class="fa fa-star text-warning"></i>
+            -
+            <strong>
+              {{ product.ratings }}
+            </strong>
+          </span>
+
+          <span *ngIf="!product.ratings">Sem</span>
+          <span> avaliações</span>
+        </p>
+      </div>
+      <div class="col-md-2 mt-2">
+        <button class="btn btn-primary btn-sm w-100">
+          <i class="fa fa-edit"></i> Editar
+        </button>
+      </div>
+    </li>
+    <button class="btn btn-info mt-2">Adicionar novo Produto</button>
+  </ul>
+</div>

@@ -52,11 +52,11 @@ export class SettingsComponent implements OnInit {
           },
           (error) => {
             localStorage.removeItem('token');
-            this.router.navigate(['/products']);
+            this.router.navigate(['/login']);
           }
         );
     } else {
-      this.router.navigate(['/products']);
+      this.router.navigate(['/login']);
     }
   }
 

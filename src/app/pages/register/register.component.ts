@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UserService } from 'src/app/components/header/user/user.service';
 
 @Component({
   selector: 'app-register',
@@ -14,7 +15,8 @@ export class RegisterComponent {
   constructor(
     private http: HttpClient,
     private router: Router,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private userService: UserService
   ) {
     this.form = this.fb.group({
       name: [
@@ -90,6 +92,7 @@ export class RegisterComponent {
       .post<any>('http://192.168.0.13:3000/auth/login', loginData)
       .subscribe(
         (res: any) => {
+          this.userService.getUser();
           localStorage.setItem('token', res.accessToken);
           this.back();
         },

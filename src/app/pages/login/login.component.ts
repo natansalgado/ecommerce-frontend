@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { UserService } from 'src/app/components/header/user/user.service';
 
 @Component({
   selector: 'app-login',
@@ -11,7 +12,11 @@ export class LoginComponent {
   password: string = '';
   error: string = '';
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private userService: UserService
+  ) {}
 
   ngOnInit(): void {
     const token = localStorage.getItem('token');
@@ -31,6 +36,7 @@ export class LoginComponent {
       .post<any>('http://192.168.0.13:3000/auth/login', loginData)
       .subscribe(
         (res: any) => {
+          this.userService.getUser();
           localStorage.setItem('token', res.accessToken);
           this.back();
         },

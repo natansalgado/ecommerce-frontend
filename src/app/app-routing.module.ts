@@ -8,6 +8,7 @@ import { StoreComponent } from './pages/store/store.component';
 import { CartComponent } from './pages/cart/cart.component';
 import { SettingsComponent } from './pages/settings/settings.component';
 import { HistoricComponent } from './pages/historic/historic.component';
+import { MystoreComponent } from './pages/mystore/mystore.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'products', pathMatch: 'full' },
@@ -19,6 +20,7 @@ const routes: Routes = [
   { path: 'cart', component: CartComponent },
   { path: 'settings', component: SettingsComponent },
   { path: 'historic', component: HistoricComponent },
+  { path: 'mystore', component: MystoreComponent },
 ];
 
 @NgModule({
