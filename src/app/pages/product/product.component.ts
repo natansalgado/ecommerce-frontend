@@ -83,10 +83,14 @@ export class ProductComponent implements OnInit {
           (error) => {
             localStorage.removeItem('token');
             this.isLogged = false;
+            if (error.error.statusCode == 401) {
+              this.router.navigate(['login']);
+            }
           }
         );
     } else {
       this.isLogged = false;
+      this.router.navigate(['login']);
     }
   }
 
@@ -125,7 +129,8 @@ export class ProductComponent implements OnInit {
             this.errorMessage =
               'Este produto não possui unidades o suficiente!';
           } else if (error.error.statusCode == 401) {
-            this.errorMessage = 'Faça o login para poder adicionar ao carrinho!';
+            this.errorMessage =
+              'Faça o login para poder adicionar ao carrinho!';
           } else {
             this.errorMessage = error.error.message;
           }

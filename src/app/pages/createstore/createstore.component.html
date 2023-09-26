@@ -1,0 +1,22 @@
+<div *ngIf="user" class="container mt-5 pt-5">
+  <div class="bg-light p-3 rounded border">
+    <h2>Criar loja</h2>
+    <label for="storename" class="mt-3">Nomeie sua loja:</label>
+    <div class="form-group mb-2">
+      <input
+        [(ngModel)]="storeName"
+        type="text"
+        id="storename"
+        class="form-control"
+        minlength="5"
+        (input)="error = ''"
+      />
+      <div *ngIf="error" class="alert alert-danger mt-1">
+        <strong>{{ error }}</strong>
+      </div>
+    </div>
+    <button (click)="submit()" type="submit" class="btn btn-primary w-100">
+      Criar loja
+    </button>
+  </div>
+</div>

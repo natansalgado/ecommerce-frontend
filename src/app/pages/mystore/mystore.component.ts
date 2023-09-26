@@ -9,11 +9,17 @@ import { Router } from '@angular/router';
 export class MystoreComponent {
   user: any = null;
   store: any = null;
+  storeCreated = false;
 
   constructor(private http: HttpClient, private router: Router) {}
 
   ngOnInit() {
     this.getUser();
+
+    if (localStorage.getItem('storeCreated')) {
+      localStorage.removeItem('storeCreated');
+      this.storeCreated = true;
+    }
   }
 
   getUser() {
@@ -30,13 +36,14 @@ export class MystoreComponent {
           (data: any) => {
             this.user = data;
             this.getStore(headers);
-            console.log('atualizou');
           },
           (error) => {
             localStorage.removeItem('token');
             this.router.navigate(['login']);
           }
         );
+    } else {
+      this.router.navigate(['login']);
     }
   }
 

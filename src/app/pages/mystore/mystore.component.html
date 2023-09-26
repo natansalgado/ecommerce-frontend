@@ -1,11 +1,16 @@
 <div *ngIf="!store" class="container mt-5">
   <h2>Você não possui uma loja!</h2>
-  <button class="btn btn-primary">Criar Loja</button>
+  <a href="/createstore" class="btn btn-primary">Criar Loja</a>
 </div>
 
 <div *ngIf="store" class="container mt-5">
+  <div *ngIf="storeCreated" class="alert alert-success">
+    <strong>Loja criada com sucesso.</strong>
+  </div>
   <h1>{{ store.name }}</h1>
-  <h3>Todos os meus produtos</h3>
+  <h3 *ngIf="store.products.length > 0">Todos os meus produtos</h3>
+
+  <p *ngIf="store.products.length <= 0">Você ainda não registrou nenhum produto em sua loja.</p>
 
   <ul class="list-group mt-3">
     <li
