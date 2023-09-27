@@ -1,0 +1,107 @@
+<div class="container bg-light rounded border p-3">
+  <h2>Criar um novo produto</h2>
+  <form (ngSubmit)="onSubmit()" #productForm="ngForm">
+    <div class="form-group">
+      <label for="title">Título:</label>
+      <input
+        type="text"
+        id="title"
+        name="title"
+        class="form-control"
+        [(ngModel)]="product.title"
+        required
+      />
+    </div>
+    <div class="form-group">
+      <label for="description">Descrição:</label>
+      <textarea
+        id="description"
+        name="description"
+        class="form-control"
+        [(ngModel)]="product.description"
+        required
+      ></textarea>
+    </div>
+    <div class="form-group">
+      <label for="price">Preço:</label>
+      <div class="input-group mb-2">
+        <div class="input-group-prepend">
+          <div class="input-group-text bg-light">R$</div>
+        </div>
+        <input
+          type="number"
+          id="price"
+          name="price"
+          class="form-control"
+          [(ngModel)]="product.price"
+          required
+          min="1"
+        />
+      </div>
+      <div
+        *ngIf="product.price != null && product.price <= 0"
+        class="alert alert-danger"
+      >
+        <strong>Valor mínimo dever ser de R$ 1,00</strong>
+      </div>
+    </div>
+    <img
+      src="{{ product.image_url }}"
+      alt="Foto de {{ product.title }}"
+      (load)="showImage = true"
+      (error)="showImage = false"
+      style="height: 150px; width: 150px; object-fit: contain"
+      [ngClass]="{ 'd-none': !showImage }"
+    />
+    <div
+      class="border rounded bg-white"
+      style="width: 150px; height: 150px"
+      [ngClass]="{ 'd-none': showImage }"
+    ></div>
+    <div class="form-group mt-1">
+      <label for="image_url">URL da Imagem do produto:</label>
+      <input
+        type="text"
+        id="image_url"
+        name="image_url"
+        class="form-control"
+        [(ngModel)]="product.image_url"
+        required
+      />
+      <div
+        *ngIf="product.image_url.length > 0 && !showImage"
+        class="alert alert-danger mt-2"
+      >
+        <strong>Adicione um link válido de uma imagem.</strong>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="quantity">Quantidade:</label>
+      <input
+        type="number"
+        id="quantity"
+        name="quantity"
+        class="form-control"
+        [(ngModel)]="product.quantity"
+        min="1"
+        required
+      />
+      <div
+        *ngIf="product.quantity != null && product.quantity <= 0"
+        class="alert alert-danger mt-2"
+      >
+        <strong
+          >Você deve possuir pelo menos 1 unidade para anunciar o
+          produto.</strong
+        >
+      </div>
+    </div>
+    <button
+      type="submit"
+      class="btn btn-primary w-100"
+      [disabled]="checkIfIsNotValid()"
+    >
+      Criar produto
+    </button>
+  </form>
+</div>

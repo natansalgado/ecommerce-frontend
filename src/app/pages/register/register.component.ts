@@ -47,7 +47,7 @@ export class RegisterComponent {
     });
   }
 
-  ngOnInit(): void {
+  ngOnInit() {
     const token = localStorage.getItem('token');
 
     if (token) {
@@ -55,7 +55,7 @@ export class RegisterComponent {
     }
   }
 
-  register(): void {
+  register() {
     if (this.form.valid && !this.checkPassword()) {
       const userData = { ...this.form.value };
 

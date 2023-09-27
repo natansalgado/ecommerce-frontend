@@ -10,6 +10,7 @@ export class MystoreComponent {
   user: any = null;
   store: any = null;
   storeCreated = false;
+  productCreated = false;
 
   constructor(private http: HttpClient, private router: Router) {}
 
@@ -19,6 +20,11 @@ export class MystoreComponent {
     if (localStorage.getItem('storeCreated')) {
       localStorage.removeItem('storeCreated');
       this.storeCreated = true;
+    }
+
+    if (localStorage.getItem('productCreated')) {
+      localStorage.removeItem('productCreated');
+      this.productCreated = true;
     }
   }
 
@@ -38,8 +44,10 @@ export class MystoreComponent {
             this.getStore(headers);
           },
           (error) => {
-            localStorage.removeItem('token');
-            this.router.navigate(['login']);
+            if (error.error.statusCode == 401) {
+              this.router.navigate(['login']);
+              localStorage.removeItem('token');
+            }
           }
         );
     } else {

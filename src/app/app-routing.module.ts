@@ -10,6 +10,7 @@ import { SettingsComponent } from './pages/settings/settings.component';
 import { HistoricComponent } from './pages/historic/historic.component';
 import { MystoreComponent } from './pages/mystore/mystore.component';
 import { CreatestoreComponent } from './pages/createstore/createstore.component';
+import { CreateproductComponent } from './pages/createproduct/createproduct.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'products', pathMatch: 'full' },
@@ -23,6 +24,7 @@ const routes: Routes = [
   { path: 'historic', component: HistoricComponent },
   { path: 'mystore', component: MystoreComponent },
   { path: 'createstore', component: CreatestoreComponent },
+  { path: 'createproduct', component: CreateproductComponent },
 ];
 
 @NgModule({

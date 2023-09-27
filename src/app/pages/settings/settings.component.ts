@@ -283,7 +283,7 @@ export class SettingsComponent implements OnInit {
           },
           (err) => {
             this.depositMessage = `Ocorreu um erro: ${err.error.message}`;
-            if (err.error.statusCode == 409) {
+            if (err.error.statusCode == 401) {
               this.router.navigate(['login']);
             }
           }

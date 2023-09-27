@@ -57,7 +57,7 @@ export class CreatestoreComponent {
             this.router.navigate(['/mystore']);
           },
           (error) => {
-            if (error.error.statusCode == 409) {
+            if (error.error.statusCode == 401) {
               localStorage.removeItem('token');
               this.router.navigate(['/login']);
             }

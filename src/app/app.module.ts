@@ -18,6 +18,7 @@ import { SettingsComponent } from './pages/settings/settings.component';
 import { HistoricComponent } from './pages/historic/historic.component';
 import { MystoreComponent } from './pages/mystore/mystore.component';
 import { CreatestoreComponent } from './pages/createstore/createstore.component';
+import { CreateproductComponent } from './pages/createproduct/createproduct.component';
 
 @NgModule({
   declarations: [
@@ -34,6 +35,7 @@ import { CreatestoreComponent } from './pages/createstore/createstore.component'
     HistoricComponent,
     MystoreComponent,
     CreatestoreComponent,
+    CreateproductComponent,
   ],
   imports: [
     BrowserModule,
