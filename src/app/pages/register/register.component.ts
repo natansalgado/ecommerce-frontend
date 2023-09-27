@@ -92,8 +92,8 @@ export class RegisterComponent {
       .post<any>('http://192.168.0.13:3000/auth/login', loginData)
       .subscribe(
         (res: any) => {
-          this.userService.getUser();
           localStorage.setItem('token', res.accessToken);
+          this.userService.getUser();
           this.back();
         },
         (err) => {

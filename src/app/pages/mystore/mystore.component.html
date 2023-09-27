@@ -71,5 +71,24 @@
     <a href="/createproduct" class="btn btn-info mt-2"
       >Adicionar novo Produto</a
     >
+    <div class="card mt-5 p-3">
+      <h5>Saldo total da loja:</h5>
+
+      <button
+        *ngIf="!showBalance"
+        (click)="showBalance = true"
+        class="btn btn-light border"
+      >
+        Exibir o saldo
+      </button>
+
+      <button
+        *ngIf="showBalance"
+        (click)="showBalance = false"
+        class="btn btn-light border"
+      >
+        <strong>R$ {{ store.balance | number : "1.2-2" }}</strong>
+      </button>
+    </div>
   </ul>
 </div>

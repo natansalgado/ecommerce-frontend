@@ -11,6 +11,7 @@ export class MystoreComponent {
   store: any = null;
   storeCreated = false;
   productCreated = false;
+  showBalance = false;
 
   constructor(private http: HttpClient, private router: Router) {}
 

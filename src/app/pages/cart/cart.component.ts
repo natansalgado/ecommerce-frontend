@@ -1,6 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { UserService } from 'src/app/components/header/user/user.service';
 
 @Component({
   selector: 'app-cart',
@@ -10,7 +11,11 @@ export class CartComponent implements OnInit {
   cart: any = null;
   error: string | null = null;
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private userService: UserService
+  ) {}
 
   ngOnInit() {
     this.getCartFromApi();
@@ -92,6 +97,7 @@ export class CartComponent implements OnInit {
         .post('http://192.168.0.13:3000/historic', {}, { headers })
         .subscribe(
           () => {
+            this.userService.getUser();
             this.getCartFromApi();
             this.error = null;
             localStorage.setItem('bought', 'true');
