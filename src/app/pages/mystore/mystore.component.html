@@ -18,6 +18,10 @@
     <strong>Produto criado com sucesso.</strong>
   </div>
 
+  <div *ngIf="productUpdated" class="alert alert-success mb-0">
+    <strong>Produto atualizado com sucesso.</strong>
+  </div>
+
   <ul class="list-group mt-0">
     <li
       *ngFor="let product of store.products"
@@ -63,9 +67,12 @@
         </p>
       </div>
       <div class="col-md-2 mt-2">
-        <button class="btn btn-primary btn-sm w-100">
+        <a
+          href="/updateproduct/{{ product.id }}"
+          class="btn btn-primary btn-sm w-100"
+        >
           <i class="fa fa-edit"></i> Editar
-        </button>
+        </a>
       </div>
     </li>
     <a href="/createproduct" class="btn btn-info mt-2"

@@ -26,11 +26,11 @@ export class ProductComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.getApi();
+    this.getProduct();
     this.checkIsLogged();
   }
 
-  getApi() {
+  getProduct() {
     this.route.params.subscribe(async (params) => {
       try {
         this.product = await this.http
@@ -122,7 +122,7 @@ export class ProductComponent implements OnInit {
           this.addedQuantity = this.quantity;
           this.added = true;
           this.errorMessage = '';
-          this.getApi();
+          this.getProduct();
         },
         (error) => {
           if (error.error.message == 'Insuficient product quantity') {

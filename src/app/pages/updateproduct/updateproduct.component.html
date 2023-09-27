@@ -1,0 +1,137 @@
+<div *ngIf="user && store">
+  <div *ngIf="!product.id" class="container pt-4">
+    <h3>Produto não encontrado.</h3>
+  </div>
+
+  <div
+    *ngIf="product.id && product.store_id !== store.id && !user.admin"
+    class="container pt-4"
+  >
+    <h3>Você não possui permissão para editar esse produto.</h3>
+  </div>
+
+  <div
+    *ngIf="product.id && (product.store_id == store.id || user.admin)"
+    class="container bg-light rounded border p-3"
+  >
+    <h2>Atualizar produto</h2>
+    <div *ngIf="product.store_id != store.id" class="alert alert-warning">
+      <strong>EDITANDO COMO ADMINISTRADOR</strong>
+    </div>
+    <form (ngSubmit)="submit()" #productForm="ngForm">
+      <div class="form-group">
+        <label for="title">Título:</label>
+        <input
+          type="text"
+          id="title"
+          name="title"
+          class="form-control"
+          [(ngModel)]="product.title"
+          value="product.title"
+          required
+        />
+      </div>
+      <div class="form-group">
+        <label for="description">Descrição:</label>
+        <textarea
+          id="description"
+          name="description"
+          class="form-control"
+          [(ngModel)]="product.description"
+          value="product.description"
+          required
+        ></textarea>
+      </div>
+      <div class="form-group">
+        <label for="price">Preço:</label>
+        <div class="input-group mb-2">
+          <div class="input-group-prepend">
+            <div class="input-group-text bg-light">R$</div>
+          </div>
+          <input
+            type="number"
+            id="price"
+            name="price"
+            class="form-control"
+            [(ngModel)]="product.price"
+            value="product.price"
+            required
+            min="1"
+          />
+        </div>
+        <div
+          *ngIf="product.price != null && product.price <= 0"
+          class="alert alert-danger"
+        >
+          <strong>Valor mínimo dever ser de R$ 1,00</strong>
+        </div>
+      </div>
+      <img
+        src="{{ product.image_url }}"
+        alt="Foto de {{ product.title }}"
+        (load)="showImage = true"
+        (error)="showImage = false"
+        style="height: 150px; width: 150px; object-fit: contain"
+        [ngClass]="{ 'd-none': !showImage }"
+      />
+      <div
+        class="border rounded bg-white"
+        style="width: 150px; height: 150px"
+        [ngClass]="{ 'd-none': showImage }"
+      ></div>
+      <div class="form-group mt-1">
+        <label for="image_url">URL da Imagem do produto:</label>
+        <input
+          type="text"
+          id="image_url"
+          name="image_url"
+          class="form-control"
+          [(ngModel)]="product.image_url"
+          value="product.image_url"
+          required
+        />
+        <div
+          *ngIf="product.image_url.length > 0 && !showImage"
+          class="alert alert-danger mt-2"
+        >
+          <strong>Adicione um link válido de uma imagem.</strong>
+        </div>
+      </div>
+      <div
+        *ngIf="product.image_url.length > 191"
+        class="alert alert-danger mt-2"
+      >
+        <strong>Utilize um link de imagem menor.</strong>
+      </div>
+      <div class="form-group">
+        <label for="quantity">Quantidade:</label>
+        <input
+          type="number"
+          id="quantity"
+          name="quantity"
+          class="form-control"
+          [(ngModel)]="product.quantity"
+          value="product.quantity"
+          min="1"
+          required
+        />
+        <div
+          *ngIf="product.quantity != null && product.quantity <= 0"
+          class="alert alert-danger mt-2"
+        >
+          <strong
+            >Você deve possuir pelo menos 1 unidade para anunciar o
+            produto.</strong
+          >
+        </div>
+      </div>
+      <button
+        type="submit"
+        class="btn btn-primary w-100"
+        [disabled]="checkIfIsNotValid() || somethingChanged()"
+      >
+        Atualizar produto
+      </button>
+    </form>
+  </div>
+</div>

@@ -74,6 +74,12 @@
       >
         <strong>Adicione um link válido de uma imagem.</strong>
       </div>
+      <div
+        *ngIf="product.image_url.length > 191"
+        class="alert alert-danger mt-2"
+      >
+        <strong>Utilize um link de imagem menor.</strong>
+      </div>
     </div>
     <div class="form-group">
       <label for="quantity">Quantidade:</label>

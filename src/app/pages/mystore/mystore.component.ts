@@ -11,6 +11,7 @@ export class MystoreComponent {
   store: any = null;
   storeCreated = false;
   productCreated = false;
+  productUpdated = false;
   showBalance = false;
 
   constructor(private http: HttpClient, private router: Router) {}
@@ -26,6 +27,11 @@ export class MystoreComponent {
     if (localStorage.getItem('productCreated')) {
       localStorage.removeItem('productCreated');
       this.productCreated = true;
+    }
+
+    if (localStorage.getItem('productUpdated')) {
+      localStorage.removeItem('productUpdated');
+      this.productUpdated = true;
     }
   }
 

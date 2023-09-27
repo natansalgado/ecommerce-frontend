@@ -1,16 +1,19 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
-  selector: 'app-createproduct',
-  templateUrl: './createproduct.component.html',
+  selector: 'app-updateproduct',
+  templateUrl: './updateproduct.component.html',
 })
-export class CreateproductComponent {
+export class UpdateproductComponent {
   user: any = null;
   store: any = null;
+  initialProduct: any = null;
 
   product = {
+    id: '',
+    store_id: '',
     title: '',
     description: '',
     price: null,
@@ -21,7 +24,11 @@ export class CreateproductComponent {
   showImage = false;
   error = '';
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {}
 
   ngOnInit() {
     this.getUser();
@@ -61,6 +68,7 @@ export class CreateproductComponent {
       .subscribe(
         (data: any) => {
           this.store = data;
+          this.getProduct();
         },
         (error) => {
           this.store = null;
@@ -69,10 +77,23 @@ export class CreateproductComponent {
       );
   }
 
-  onSubmit() {
+  getProduct() {
+    this.route.params.subscribe(async (params) => {
+      try {
+        this.http
+          .get<any>(`http://192.168.0.13:3000/product/${params['id']}`)
+          .subscribe((data: any) => {
+            this.product = data;
+            this.initialProduct = { ...data };
+          });
+      } catch (error) {}
+    });
+  }
+
+  submit() {
     if (this.checkIfIsNotValid()) return;
 
-    this.createProduct();
+    this.updateProduct();
   }
 
   checkIfIsNotValid() {
@@ -93,8 +114,31 @@ export class CreateproductComponent {
     return true;
   }
 
-  createProduct() {
+  somethingChanged() {
+    if (
+      this.initialProduct.title == this.product.title &&
+      this.initialProduct.description == this.product.description &&
+      this.initialProduct.price == this.product.price &&
+      this.initialProduct.image_url == this.product.image_url &&
+      this.initialProduct.quantity == this.product.quantity
+    ) {
+      return true;
+    }
+    return false;
+  }
+
+  updateProduct() {
     const token = localStorage.getItem('token');
+
+    const { title, description, price, image_url, quantity } = this.product;
+
+    const product = {
+      title,
+      description,
+      price,
+      image_url,
+      quantity,
+    };
 
     if (token) {
       const headers = new HttpHeaders({
@@ -102,10 +146,12 @@ export class CreateproductComponent {
       });
 
       this.http
-        .post('http://192.168.0.13:3000/product', this.product, { headers })
+        .put(`http://192.168.0.13:3000/product/${this.product.id}`, product, {
+          headers,
+        })
         .subscribe(
           () => {
-            localStorage.setItem('productCreated', 'true');
+            localStorage.setItem('productUpdated', 'true');
             this.router.navigate(['/mystore']);
           },
           (err) => {
