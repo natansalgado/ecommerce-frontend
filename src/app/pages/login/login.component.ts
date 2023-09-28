@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { UserService } from 'src/app/components/header/user/user.service';
+import { apiUrl } from 'src/environment';
 
 @Component({
   selector: 'app-login',
@@ -32,23 +33,21 @@ export class LoginComponent {
       password: this.password,
     };
 
-    this.http
-      .post<any>('http://192.168.0.13:3000/auth/login', loginData)
-      .subscribe(
-        (res: any) => {
-          localStorage.setItem('token', res.accessToken);
-          this.userService.getUser();
-          this.back();
-        },
-        (err) => {
-          if (err.error.message === 'Invalid email or password') {
-            this.error = 'Usuário ou senha inválido.';
-          } else {
-            this.error =
-              'Problemas ao tentar acessar o servidor, tente novamente mais tarde.';
-          }
+    this.http.post<any>(`${apiUrl}/auth/login`, loginData).subscribe(
+      (res: any) => {
+        localStorage.setItem('token', res.accessToken);
+        this.userService.getUser();
+        this.back();
+      },
+      (err) => {
+        if (err.error.message === 'Invalid email or password') {
+          this.error = 'Usuário ou senha inválido.';
+        } else {
+          this.error =
+            'Problemas ao tentar acessar o servidor, tente novamente mais tarde.';
         }
-      );
+      }
+    );
   }
 
   back() {

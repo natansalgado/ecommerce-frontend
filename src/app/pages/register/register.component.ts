@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UserService } from 'src/app/components/header/user/user.service';
+import { apiUrl } from 'src/environment';
 
 @Component({
   selector: 'app-register',
@@ -65,20 +66,18 @@ export class RegisterComponent {
         headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
       };
 
-      this.http
-        .post('http://192.168.0.13:3000/user', userData, httpOptions)
-        .subscribe(
-          (res: any) => {
-            this.login();
-          },
-          (error) => {
-            if (error.error.message === 'Email already in use') {
-              this.error = 'Este email já está sendo utilizado.';
-            } else {
-              this.error = 'Ocorreu um erro, tente novamente mais tarde.';
-            }
+      this.http.post(`${apiUrl}/user`, userData, httpOptions).subscribe(
+        (res: any) => {
+          this.login();
+        },
+        (error) => {
+          if (error.error.message === 'Email already in use') {
+            this.error = 'Este email já está sendo utilizado.';
+          } else {
+            this.error = 'Ocorreu um erro, tente novamente mais tarde.';
           }
-        );
+        }
+      );
     }
   }
 
@@ -88,23 +87,21 @@ export class RegisterComponent {
       password: this.form.value.password,
     };
 
-    this.http
-      .post<any>('http://192.168.0.13:3000/auth/login', loginData)
-      .subscribe(
-        (res: any) => {
-          localStorage.setItem('token', res.accessToken);
-          this.userService.getUser();
-          this.back();
-        },
-        (err) => {
-          if (err.error.message === 'Invalid email or password') {
-            this.error = 'Usuário ou senha inválido.';
-          } else {
-            this.error =
-              'Problemas ao tentar acessar o servidor, tente novamente mais tarde.';
-          }
+    this.http.post<any>(`${apiUrl}/auth/login`, loginData).subscribe(
+      (res: any) => {
+        localStorage.setItem('token', res.accessToken);
+        this.userService.getUser();
+        this.back();
+      },
+      (err) => {
+        if (err.error.message === 'Invalid email or password') {
+          this.error = 'Usuário ou senha inválido.';
+        } else {
+          this.error =
+            'Problemas ao tentar acessar o servidor, tente novamente mais tarde.';
         }
-      );
+      }
+    );
   }
 
   back() {

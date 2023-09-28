@@ -1,6 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { apiUrl } from 'src/environment';
 
 @Component({
   selector: 'app-updateproduct',
@@ -42,46 +43,42 @@ export class UpdateproductComponent {
         Authorization: `Bearer ${authToken}`,
       });
 
-      this.http
-        .get('http://192.168.0.13:3000/auth/profile', { headers })
-        .subscribe(
-          (data: any) => {
-            this.user = data;
-            this.getStore(headers);
-          },
-          (error) => {
-            if (error.error.statusCode == 401) {
-              this.router.navigate(['/login']);
-              localStorage.removeItem('token');
-            }
-            this.router.navigate(['/mystore']);
+      this.http.get(`${apiUrl}/auth/profile`, { headers }).subscribe(
+        (data: any) => {
+          this.user = data;
+          this.getStore(headers);
+        },
+        (error) => {
+          if (error.error.statusCode == 401) {
+            this.router.navigate(['/login']);
+            localStorage.removeItem('token');
           }
-        );
+          this.router.navigate(['/mystore']);
+        }
+      );
     } else {
       this.router.navigate(['/login']);
     }
   }
 
   getStore(headers: HttpHeaders) {
-    this.http
-      .get('http://192.168.0.13:3000/store/mystore', { headers })
-      .subscribe(
-        (data: any) => {
-          this.store = data;
-          this.getProduct();
-        },
-        (error) => {
-          this.store = null;
-          this.router.navigate(['/mystore']);
-        }
-      );
+    this.http.get(`${apiUrl}/store/mystore`, { headers }).subscribe(
+      (data: any) => {
+        this.store = data;
+        this.getProduct();
+      },
+      (error) => {
+        this.store = null;
+        this.router.navigate(['/mystore']);
+      }
+    );
   }
 
   getProduct() {
     this.route.params.subscribe(async (params) => {
       try {
         this.http
-          .get<any>(`http://192.168.0.13:3000/product/${params['id']}`)
+          .get<any>(`${apiUrl}/product/${params['id']}`)
           .subscribe((data: any) => {
             this.product = data;
             this.initialProduct = { ...data };
@@ -146,7 +143,7 @@ export class UpdateproductComponent {
       });
 
       this.http
-        .put(`http://192.168.0.13:3000/product/${this.product.id}`, product, {
+        .put(`${apiUrl}/product/${this.product.id}`, product, {
           headers,
         })
         .subscribe(

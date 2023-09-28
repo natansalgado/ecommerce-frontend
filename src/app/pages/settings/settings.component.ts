@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UserService } from 'src/app/components/header/user/user.service';
+import { apiUrl } from 'src/environment';
 
 @Component({
   selector: 'app-settings',
@@ -43,18 +44,16 @@ export class SettingsComponent implements OnInit {
         Authorization: `Bearer ${authToken}`,
       });
 
-      this.http
-        .get('http://192.168.0.13:3000/auth/profile', { headers })
-        .subscribe(
-          (data: any) => {
-            this.user = data;
-            this.createForm();
-          },
-          (error) => {
-            localStorage.removeItem('token');
-            this.router.navigate(['/login']);
-          }
-        );
+      this.http.get(`${apiUrl}/auth/profile`, { headers }).subscribe(
+        (data: any) => {
+          this.user = data;
+          this.createForm();
+        },
+        (error) => {
+          localStorage.removeItem('token');
+          this.router.navigate(['/login']);
+        }
+      );
     } else {
       this.router.navigate(['/login']);
     }
@@ -94,24 +93,22 @@ export class SettingsComponent implements OnInit {
       password: this.form?.value.currentPassword,
     };
 
-    this.http
-      .post<any>('http://192.168.0.13:3000/auth/login', loginData)
-      .subscribe(
-        (res: any) => {
-          this.update();
-          this.currentPassword = true;
-          this.successMessage = 'perfil atualizado com sucesso.';
-        },
-        (err) => {
-          if (err.error.message === 'Invalid email or password') {
-            this.currentPassword = false;
-            this.successMessage = '';
-          } else {
-            this.error =
-              'Problemas ao tentar acessar o servidor, tente novamente mais tarde.';
-          }
+    this.http.post<any>(`${apiUrl}/auth/login`, loginData).subscribe(
+      (res: any) => {
+        this.update();
+        this.currentPassword = true;
+        this.successMessage = 'perfil atualizado com sucesso.';
+      },
+      (err) => {
+        if (err.error.message === 'Invalid email or password') {
+          this.currentPassword = false;
+          this.successMessage = '';
+        } else {
+          this.error =
+            'Problemas ao tentar acessar o servidor, tente novamente mais tarde.';
         }
-      );
+      }
+    );
   }
 
   update() {
@@ -140,7 +137,7 @@ export class SettingsComponent implements OnInit {
         data.currentPassword = undefined;
 
         this.http
-          .put(`http://192.168.0.13:3000/user/${this.user.id}`, data, {
+          .put(`${apiUrl}/user/${this.user.id}`, data, {
             headers,
           })
           .subscribe(
@@ -268,11 +265,7 @@ export class SettingsComponent implements OnInit {
       });
 
       this.http
-        .post(
-          'http://192.168.0.13:3000/deposit',
-          { value: this.value },
-          { headers }
-        )
+        .post(`${apiUrl}/deposit`, { value: this.value }, { headers })
         .subscribe(
           (res) => {
             this.depositSuccessMessage = `Depósito concluído com sucesso! valor: R$ ${this.value.toFixed(

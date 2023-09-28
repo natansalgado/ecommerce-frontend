@@ -1,6 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { apiUrl } from 'src/environment';
 
 @Component({
   selector: 'app-product',
@@ -34,7 +35,7 @@ export class ProductComponent implements OnInit {
     this.route.params.subscribe(async (params) => {
       try {
         this.product = await this.http
-          .get<any>(`http://192.168.0.13:3000/product/${params['id']}`)
+          .get<any>(`${apiUrl}/product/${params['id']}`)
           .toPromise();
         this.checkIfProductIsInCart();
       } catch (error) {}
@@ -50,7 +51,7 @@ export class ProductComponent implements OnInit {
       });
 
       this.http
-        .get(`http://192.168.0.13:3000/cart/product/${this.product.id}`, {
+        .get(`${apiUrl}/cart/product/${this.product.id}`, {
           headers,
         })
         .subscribe(
@@ -73,7 +74,7 @@ export class ProductComponent implements OnInit {
       });
 
       this.http
-        .get('http://192.168.0.13:3000/auth/profile', {
+        .get(`${apiUrl}/auth/profile`, {
           headers,
         })
         .subscribe(
@@ -115,28 +116,24 @@ export class ProductComponent implements OnInit {
       return;
     }
 
-    this.http
-      .post('http://192.168.0.13:3000/cart/add', body, { headers })
-      .subscribe(
-        (response) => {
-          this.addedQuantity = this.quantity;
-          this.added = true;
-          this.errorMessage = '';
-          this.getProduct();
-        },
-        (error) => {
-          if (error.error.message == 'Insuficient product quantity') {
-            this.errorMessage =
-              'Este produto não possui unidades o suficiente!';
-          } else if (error.error.statusCode == 401) {
-            this.errorMessage =
-              'Faça o login para poder adicionar ao carrinho!';
-          } else {
-            this.errorMessage = error.error.message;
-          }
-          this.added = false;
+    this.http.post(`${apiUrl}/cart/add`, body, { headers }).subscribe(
+      (response) => {
+        this.addedQuantity = this.quantity;
+        this.added = true;
+        this.errorMessage = '';
+        this.getProduct();
+      },
+      (error) => {
+        if (error.error.message == 'Insuficient product quantity') {
+          this.errorMessage = 'Este produto não possui unidades o suficiente!';
+        } else if (error.error.statusCode == 401) {
+          this.errorMessage = 'Faça o login para poder adicionar ao carrinho!';
+        } else {
+          this.errorMessage = error.error.message;
         }
-      );
+        this.added = false;
+      }
+    );
   }
 
   calcRoundedStars(stars1: any, ratings: any) {

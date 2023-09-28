@@ -1,6 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { apiUrl } from 'src/environment';
 
 @Component({
   selector: 'app-mystore',
@@ -43,35 +44,31 @@ export class MystoreComponent {
         Authorization: `Bearer ${authToken}`,
       });
 
-      this.http
-        .get('http://192.168.0.13:3000/auth/profile', { headers })
-        .subscribe(
-          (data: any) => {
-            this.user = data;
-            this.getStore(headers);
-          },
-          (error) => {
-            if (error.error.statusCode == 401) {
-              this.router.navigate(['login']);
-              localStorage.removeItem('token');
-            }
+      this.http.get(`${apiUrl}/auth/profile`, { headers }).subscribe(
+        (data: any) => {
+          this.user = data;
+          this.getStore(headers);
+        },
+        (error) => {
+          if (error.error.statusCode == 401) {
+            this.router.navigate(['login']);
+            localStorage.removeItem('token');
           }
-        );
+        }
+      );
     } else {
       this.router.navigate(['login']);
     }
   }
 
   getStore(headers: HttpHeaders) {
-    this.http
-      .get('http://192.168.0.13:3000/store/mystore', { headers })
-      .subscribe(
-        (data: any) => {
-          this.store = data;
-        },
-        (error) => {
-          this.store = null;
-        }
-      );
+    this.http.get(`${apiUrl}/store/mystore`, { headers }).subscribe(
+      (data: any) => {
+        this.store = data;
+      },
+      (error) => {
+        this.store = null;
+      }
+    );
   }
 }

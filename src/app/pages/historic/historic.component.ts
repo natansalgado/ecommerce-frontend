@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { apiUrl } from 'src/environment';
 
 @Component({
   selector: 'app-historic',
@@ -25,7 +26,7 @@ export class HistoricComponent {
         Authorization: `Bearer ${token}`,
       };
 
-      this.http.get('http://192.168.0.13:3000/historic', { headers }).subscribe(
+      this.http.get(`${apiUrl}/historic`, { headers }).subscribe(
         (res) => {
           this.historic = res;
         },

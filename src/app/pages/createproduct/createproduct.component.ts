@@ -1,6 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { apiUrl } from 'src/environment';
 
 @Component({
   selector: 'app-createproduct',
@@ -35,38 +36,34 @@ export class CreateproductComponent {
         Authorization: `Bearer ${authToken}`,
       });
 
-      this.http
-        .get('http://192.168.0.13:3000/auth/profile', { headers })
-        .subscribe(
-          (data: any) => {
-            this.user = data;
-            this.getStore(headers);
-          },
-          (error) => {
-            if (error.error.statusCode == 401) {
-              this.router.navigate(['/login']);
-              localStorage.removeItem('token');
-            }
-            this.router.navigate(['/mystore']);
+      this.http.get(`${apiUrl}/auth/profile`, { headers }).subscribe(
+        (data: any) => {
+          this.user = data;
+          this.getStore(headers);
+        },
+        (error) => {
+          if (error.error.statusCode == 401) {
+            this.router.navigate(['/login']);
+            localStorage.removeItem('token');
           }
-        );
+          this.router.navigate(['/mystore']);
+        }
+      );
     } else {
       this.router.navigate(['/login']);
     }
   }
 
   getStore(headers: HttpHeaders) {
-    this.http
-      .get('http://192.168.0.13:3000/store/mystore', { headers })
-      .subscribe(
-        (data: any) => {
-          this.store = data;
-        },
-        (error) => {
-          this.store = null;
-          this.router.navigate(['/mystore']);
-        }
-      );
+    this.http.get(`${apiUrl}/store/mystore`, { headers }).subscribe(
+      (data: any) => {
+        this.store = data;
+      },
+      (error) => {
+        this.store = null;
+        this.router.navigate(['/mystore']);
+      }
+    );
   }
 
   onSubmit() {
@@ -101,21 +98,19 @@ export class CreateproductComponent {
         Authorization: `Bearer ${token}`,
       });
 
-      this.http
-        .post('http://192.168.0.13:3000/product', this.product, { headers })
-        .subscribe(
-          () => {
-            localStorage.setItem('productCreated', 'true');
-            this.router.navigate(['/mystore']);
-          },
-          (err) => {
-            if (err.error.statusCode == 401) {
-              this.router.navigate(['/login']);
-            } else {
-              this.error = err.error.message;
-            }
+      this.http.post(`${apiUrl}/product`, this.product, { headers }).subscribe(
+        () => {
+          localStorage.setItem('productCreated', 'true');
+          this.router.navigate(['/mystore']);
+        },
+        (err) => {
+          if (err.error.statusCode == 401) {
+            this.router.navigate(['/login']);
+          } else {
+            this.error = err.error.message;
           }
-        );
+        }
+      );
     } else {
       this.router.navigate(['/login']);
     }

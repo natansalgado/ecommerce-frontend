@@ -1,4 +1,5 @@
 .vscode
+environment.ts
 
 # Compiled output
 /dist

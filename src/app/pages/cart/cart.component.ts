@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService } from 'src/app/components/header/user/user.service';
+import { apiUrl } from 'src/environment';
 
 @Component({
   selector: 'app-cart',
@@ -29,7 +30,7 @@ export class CartComponent implements OnInit {
         Authorization: `Bearer ${token}`,
       });
 
-      this.http.get('http://192.168.0.13:3000/cart', { headers }).subscribe(
+      this.http.get(`${apiUrl}/cart`, { headers }).subscribe(
         (response) => {
           this.cart = response;
         },
@@ -52,16 +53,14 @@ export class CartComponent implements OnInit {
 
       const body = { productId, quantity };
 
-      this.http
-        .post('http://192.168.0.13:3000/cart/add', body, { headers })
-        .subscribe(
-          () => {
-            this.getCartFromApi();
-          },
-          (err) => {
-            if (err.error.statusCode === 401) this.router.navigate(['/login']);
-          }
-        );
+      this.http.post(`${apiUrl}/cart/add`, body, { headers }).subscribe(
+        () => {
+          this.getCartFromApi();
+        },
+        (err) => {
+          if (err.error.statusCode === 401) this.router.navigate(['/login']);
+        }
+      );
     } else {
       this.router.navigate(['/login']);
     }
@@ -76,7 +75,7 @@ export class CartComponent implements OnInit {
       });
 
       this.http
-        .delete('http://192.168.0.13:3000/cart/empty', {
+        .delete(`${apiUrl}/cart/empty`, {
           headers,
         })
         .subscribe((res) => {
@@ -93,27 +92,25 @@ export class CartComponent implements OnInit {
         Authorization: `Bearer ${token}`,
       });
 
-      this.http
-        .post('http://192.168.0.13:3000/historic', {}, { headers })
-        .subscribe(
-          () => {
-            this.userService.getUser();
-            this.getCartFromApi();
-            this.error = null;
-            localStorage.setItem('bought', 'true');
-            this.router.navigate(['/historic']);
-          },
-          (err) => {
-            if ((err.error.message = 'Insufficient funds')) {
-              this.error =
-                'Saldo da conta insuficiente. Faça um depósito para poder finalizar a compra.';
-            } else if (err.error.statusCode == 401) {
-              this.router.navigate(['/login']);
-            } else {
-              this.error = 'Erro ao tentar se conectar com o servidor.';
-            }
+      this.http.post(`${apiUrl}/historic`, {}, { headers }).subscribe(
+        () => {
+          this.userService.getUser();
+          this.getCartFromApi();
+          this.error = null;
+          localStorage.setItem('bought', 'true');
+          this.router.navigate(['/historic']);
+        },
+        (err) => {
+          if ((err.error.message = 'Insufficient funds')) {
+            this.error =
+              'Saldo da conta insuficiente. Faça um depósito para poder finalizar a compra.';
+          } else if (err.error.statusCode == 401) {
+            this.router.navigate(['/login']);
+          } else {
+            this.error = 'Erro ao tentar se conectar com o servidor.';
           }
-        );
+        }
+      );
     } else this.router.navigate(['/login']);
   }
 }

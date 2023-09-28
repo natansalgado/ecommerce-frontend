@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Route } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { apiUrl } from 'src/environment';
 
 @Component({
   selector: 'app-store',
@@ -16,7 +17,7 @@ export class StoreComponent {
     this.route.params.subscribe(async (params) => {
       try {
         this.store = await this.http
-          .get<any>(`http://192.168.0.13:3000/store/${params['id']}`)
+          .get<any>(`${apiUrl}/store/${params['id']}`)
           .toPromise();
       } catch (error) {}
     });

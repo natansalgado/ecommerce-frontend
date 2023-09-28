@@ -1,6 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { apiUrl } from 'src/environment';
 
 @Component({
   selector: 'app-createstore',
@@ -25,18 +26,16 @@ export class CreatestoreComponent {
         Authorization: `Bearer ${authToken}`,
       });
 
-      this.http
-        .get('http://192.168.0.13:3000/auth/profile', { headers })
-        .subscribe(
-          (data: any) => {
-            this.user = data;
-            this.verifyUserHasStore();
-          },
-          (error) => {
-            localStorage.removeItem('token');
-            this.router.navigate(['login']);
-          }
-        );
+      this.http.get(`${apiUrl}/auth/profile`, { headers }).subscribe(
+        (data: any) => {
+          this.user = data;
+          this.verifyUserHasStore();
+        },
+        (error) => {
+          localStorage.removeItem('token');
+          this.router.navigate(['login']);
+        }
+      );
     } else {
       this.router.navigate(['login']);
     }
@@ -50,19 +49,17 @@ export class CreatestoreComponent {
         Authorization: `Bearer ${authToken}`,
       });
 
-      this.http
-        .get('http://192.168.0.13:3000/store/mystore', { headers })
-        .subscribe(
-          (data: any) => {
-            this.router.navigate(['/mystore']);
-          },
-          (error) => {
-            if (error.error.statusCode == 401) {
-              localStorage.removeItem('token');
-              this.router.navigate(['/login']);
-            }
+      this.http.get(`${apiUrl}/store/mystore`, { headers }).subscribe(
+        (data: any) => {
+          this.router.navigate(['/mystore']);
+        },
+        (error) => {
+          if (error.error.statusCode == 401) {
+            localStorage.removeItem('token');
+            this.router.navigate(['/login']);
           }
-        );
+        }
+      );
     } else {
       this.router.navigate(['/login']);
     }
@@ -87,23 +84,21 @@ export class CreatestoreComponent {
 
       const body = { name: this.storeName };
 
-      this.http
-        .post('http://192.168.0.13:3000/store', body, { headers })
-        .subscribe(
-          () => {
-            localStorage.setItem('storeCreated', 'true');
-            this.router.navigate(['/mystore']);
-          },
-          (err) => {
-            if (err.error.message.includes('is already in use')) {
-              this.error = 'Este nome já está em uso.';
-            } else if (err.error.statusCode == 401) {
-              this.router.navigate(['/login']);
-            } else {
-              this.error = err.error.message;
-            }
+      this.http.post(`${apiUrl}/store`, body, { headers }).subscribe(
+        () => {
+          localStorage.setItem('storeCreated', 'true');
+          this.router.navigate(['/mystore']);
+        },
+        (err) => {
+          if (err.error.message.includes('is already in use')) {
+            this.error = 'Este nome já está em uso.';
+          } else if (err.error.statusCode == 401) {
+            this.router.navigate(['/login']);
+          } else {
+            this.error = err.error.message;
           }
-        );
+        }
+      );
     } else {
       this.router.navigate(['/login']);
     }
