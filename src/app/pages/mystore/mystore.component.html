@@ -28,16 +28,22 @@
       class="row border rounded mt-2 py-3 mx-0"
     >
       <div class="col-md-2">
-        <img
-          src="{{ product.image_url }}"
-          alt="{{ product.title }}"
-          style="max-height: 88px; object-fit: contain"
-          class="w-100"
-        />
+        <a href="product/{{ product.id }}">
+          <img
+            src="{{ product.image_url }}"
+            alt="{{ product.title }}"
+            style="max-height: 88px; object-fit: contain"
+            class="w-100"
+          />
+        </a>
       </div>
 
       <div class="col-md-5">
-        <h4>{{ product.title }}</h4>
+        <a class="text-dark" href="product/{{ product.id }}">
+          <h4>
+            {{ product.title }}
+          </h4>
+        </a>
       </div>
 
       <div class="text-start col-md-3">
@@ -69,7 +75,7 @@
       <div class="col-md-2 mt-2">
         <a
           href="/updateproduct/{{ product.id }}"
-          class="btn btn-primary btn-sm w-100"
+          class="btn btn-info btn-sm w-100"
         >
           <i class="fa fa-edit"></i> Editar
         </a>
@@ -77,6 +83,9 @@
     </li>
     <a href="/createproduct" class="btn btn-info mt-2"
       >Adicionar novo Produto</a
+    >
+    <a href="/storesales" class="btn btn-primary mt-2"
+      >Ver todas as vendas da loja</a
     >
     <div class="card mt-5 p-3">
       <h5>Saldo total da loja:</h5>
@@ -86,7 +95,7 @@
         (click)="showBalance = true"
         class="btn btn-light border"
       >
-        Exibir o saldo
+        Exibir saldo
       </button>
 
       <button

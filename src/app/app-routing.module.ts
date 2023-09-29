@@ -12,6 +12,7 @@ import { MystoreComponent } from './pages/mystore/mystore.component';
 import { CreatestoreComponent } from './pages/createstore/createstore.component';
 import { CreateproductComponent } from './pages/createproduct/createproduct.component';
 import { UpdateproductComponent } from './pages/updateproduct/updateproduct.component';
+import { StoresalesComponent } from './pages/storesales/storesales.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'products', pathMatch: 'full' },
@@ -27,6 +28,8 @@ const routes: Routes = [
   { path: 'createstore', component: CreatestoreComponent },
   { path: 'createproduct', component: CreateproductComponent },
   { path: 'updateproduct/:id', component: UpdateproductComponent },
+  { path: 'storesales', component: StoresalesComponent },
+  { path: '**', redirectTo: 'products', pathMatch: 'full' },
 ];
 
 @NgModule({
