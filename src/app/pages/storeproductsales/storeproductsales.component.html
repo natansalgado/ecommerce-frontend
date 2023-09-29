@@ -1,0 +1,93 @@
+<div *ngIf="!product" class="container mt-5">
+  <h5 *ngIf="!sales" class="mb-3">Produto não encontrado.</h5>
+</div>
+
+<div
+  *ngIf="product && product.store_id !== store.id && !user.admin"
+  class="container mt-5"
+>
+  <h5 class="mb-3">
+    Somente o dono da loja ou um admin pode ver o histórico de vendas do
+    produto.
+  </h5>
+</div>
+
+<div
+  *ngIf="
+    sales && store && product && (product.store_id == store.id || user.admin)
+  "
+  class="container mt-5"
+>
+  <h1>{{ store.name }}</h1>
+
+  <h3 class="mb-3">Todas as vendas de {{ product.title }}</h3>
+
+  <div *ngIf="product.store_id !== store.id" class="alert alert-warning">
+    <strong>VISUALIZANDO COMO ADMINISTRADOR</strong>
+  </div>
+
+  <h5 *ngIf="sales.length <= 0" class="mb-3">
+    Este produto ainda não teve nenhuma venda.
+  </h5>
+
+  <button
+    *ngIf="sales && !showTotal && sales.length > 0"
+    (click)="showTotal = true"
+    class="btn btn-light border mb-0 w-100"
+  >
+    Mostrar soma do valor de todos os produtos já vendidos
+  </button>
+
+  <button
+    *ngIf="sales && showTotal"
+    (click)="showTotal = false"
+    class="btn btn-light border mb-0 w-100"
+  >
+    <strong> R$ {{ calcAllSalesPrice() | number : "1.2-2" }} </strong>
+  </button>
+
+  <ul class="list-group mt-0">
+    <li *ngFor="let sale of sales" class="row border rounded mt-2 py-3 mx-0">
+      <div class="col-md-2">
+        <a href="product/{{ sale.product.id }}">
+          <img
+            src="{{ sale.product.image_url }}"
+            alt="{{ sale.product.title }}"
+            class="img-thumbnail"
+          />
+        </a>
+      </div>
+
+      <div class="col-md-6">
+        <a class="text-dark" href="product/{{ sale.product.id }}">
+          <h4>{{ sale.product.title }}</h4>
+        </a>
+      </div>
+
+      <div class="text-start col-md-2">
+        <strong><p class="mb-0">Comprador:</p></strong>
+        <strong>
+          <p>{{ sale.historic.user.name }}</p>
+        </strong>
+      </div>
+
+      <div class="text-start col-md-2">
+        <p class="mb-0">
+          <strong>
+            {{ sale.quantity }}
+            <span *ngIf="sale.quantity < 2"> unidade</span>
+            <span *ngIf="sale.quantity >= 2"> unidades</span>
+          </strong>
+        </p>
+        <p class="mb-0">
+          <strong>R$ {{ sale.price | number : "1.2-2" }}</strong>
+        </p>
+        <strong>
+          <p class="mb-0">
+            {{ sale.historic.created_at | date : "dd/MM/yyyy" }}
+          </p>
+        </strong>
+      </div>
+    </li>
+  </ul>
+</div>

@@ -13,6 +13,7 @@ import { CreatestoreComponent } from './pages/createstore/createstore.component'
 import { CreateproductComponent } from './pages/createproduct/createproduct.component';
 import { UpdateproductComponent } from './pages/updateproduct/updateproduct.component';
 import { StoresalesComponent } from './pages/storesales/storesales.component';
+import { StoreproductsalesComponent } from './pages/storeproductsales/storeproductsales.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'products', pathMatch: 'full' },
@@ -29,6 +30,7 @@ const routes: Routes = [
   { path: 'createproduct', component: CreateproductComponent },
   { path: 'updateproduct/:id', component: UpdateproductComponent },
   { path: 'storesales', component: StoresalesComponent },
+  { path: 'storesales/:id', component: StoreproductsalesComponent },
   { path: '**', redirectTo: 'products', pathMatch: 'full' },
 ];
 
