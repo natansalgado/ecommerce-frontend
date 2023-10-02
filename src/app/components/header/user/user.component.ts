@@ -17,17 +17,29 @@ export class UserComponent {
   constructor(private router: Router, private userService: UserService) {}
 
   ngOnInit() {
-    this.updateSubscription = this.userService.update$.subscribe(() => {
-      this.getUser();
-    });
+    this.updateSubscription = this.userService.update$.subscribe(
+      () => {
+        this.getUser();
+      },
+      () => {
+        localStorage.removeItem('token');
+        this.router.navigate(['/login']);
+      }
+    );
 
     this.getUser();
   }
 
   getUser() {
-    this.userService.getUser().subscribe((data) => {
-      this.user = data;
-    });
+    this.userService.getUser().subscribe(
+      (data) => {
+        this.user = data;
+      },
+      () => {
+        localStorage.removeItem('token');
+        this.router.navigate(['/login']);
+      }
+    );
   }
 
   abilityShow() {
