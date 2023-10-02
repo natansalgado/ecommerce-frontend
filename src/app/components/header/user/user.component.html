@@ -1,15 +1,13 @@
-<ng-container *ngIf="!userService.user">
+<ng-container *ngIf="!user && show">
   <button class="btn btn-primary" (click)="login()">Faça login</button>
 </ng-container>
 
-<div *ngIf="userService.user">
+<div *ngIf="user">
   <div class="d-flex flex-row align-items-center justify-content-end">
     <p class="text-light m-0 mr-2">
-      Olá, <strong>{{ userService.user.name }}</strong>
+      Olá, <strong>{{ user.name }}</strong>
     </p>
-    <p class="text-light m-0">
-      R$ {{ userService.user.balance | number : "1.2-2" }}
-    </p>
+    <p class="text-light m-0">R$ {{ user.balance | number : "1.2-2" }}</p>
 
     <button
       class="btn btn-secondary ml-2"

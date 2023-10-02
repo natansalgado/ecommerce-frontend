@@ -1,6 +1,7 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { UserService } from 'src/app/components/header/user/user.service';
 import { apiUrl } from 'src/environment';
 
 @Component({
@@ -8,7 +9,7 @@ import { apiUrl } from 'src/environment';
   templateUrl: './product.component.html',
   styleUrls: ['../products/products.style.css'],
 })
-export class ProductComponent implements OnInit {
+export class ProductComponent {
   product: any = null;
   isLogged = false;
   quantity = 1;
@@ -23,10 +24,11 @@ export class ProductComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private http: HttpClient,
-    private router: Router
+    private router: Router,
+    private userService: UserService
   ) {}
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.getProduct();
     this.checkIsLogged();
   }
@@ -43,56 +45,36 @@ export class ProductComponent implements OnInit {
   }
 
   checkIfProductIsInCart() {
-    const token = localStorage.getItem('token');
+    const headers = this.userService.createHeaders();
 
-    if (token) {
-      const headers = new HttpHeaders({
-        Authorization: `Bearer ${token}`,
+    this.http
+      .get(`${apiUrl}/cart/product/${this.product.id}`, {
+        headers,
+      })
+      .subscribe((res) => {
+        this.productInCart = res;
       });
-
-      this.http
-        .get(`${apiUrl}/cart/product/${this.product.id}`, {
-          headers,
-        })
-        .subscribe(
-          (res) => {
-            this.productInCart = res;
-          },
-          (error) => {}
-        );
-    } else {
-      this.isLogged = false;
-    }
   }
 
   checkIsLogged(): void {
-    const authToken = localStorage.getItem('token');
+    const headers = this.userService.createHeaders();
 
-    if (authToken) {
-      const headers = new HttpHeaders({
-        Authorization: `Bearer ${authToken}`,
-      });
-
-      this.http
-        .get(`${apiUrl}/auth/profile`, {
-          headers,
-        })
-        .subscribe(
-          (data) => {
-            this.isLogged = true;
-          },
-          (error) => {
-            localStorage.removeItem('token');
-            this.isLogged = false;
-            if (error.error.statusCode == 401) {
-              this.router.navigate(['login']);
-            }
+    this.http
+      .get(`${apiUrl}/auth/profile`, {
+        headers,
+      })
+      .subscribe(
+        (data) => {
+          this.isLogged = true;
+        },
+        (err) => {
+          localStorage.removeItem('token');
+          this.isLogged = false;
+          if (err.error.statusCode == 401) {
+            this.router.navigate(['login']);
           }
-        );
-    } else {
-      this.isLogged = false;
-      this.router.navigate(['login']);
-    }
+        }
+      );
   }
 
   changeQuantity(quantity: number) {
@@ -100,11 +82,7 @@ export class ProductComponent implements OnInit {
   }
 
   addToCart() {
-    const token = localStorage.getItem('token');
-
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`,
-    });
+    const headers = this.userService.createHeaders();
 
     const body = {
       productId: this.product.id,
@@ -123,13 +101,13 @@ export class ProductComponent implements OnInit {
         this.errorMessage = '';
         this.getProduct();
       },
-      (error) => {
-        if (error.error.message == 'Insuficient product quantity') {
+      (err) => {
+        if (err.error.message == 'Insuficient product quantity') {
           this.errorMessage = 'Este produto não possui unidades o suficiente!';
-        } else if (error.error.statusCode == 401) {
+        } else if (err.error.statusCode == 401) {
           this.errorMessage = 'Faça o login para poder adicionar ao carrinho!';
         } else {
-          this.errorMessage = error.error.message;
+          this.errorMessage = err.error.message;
         }
         this.added = false;
       }

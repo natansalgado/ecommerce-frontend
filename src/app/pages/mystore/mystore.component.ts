@@ -1,6 +1,7 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { UserService } from 'src/app/components/header/user/user.service';
 import { apiUrl } from 'src/environment';
 
 @Component({
@@ -15,7 +16,11 @@ export class MystoreComponent {
   productUpdated = false;
   showBalance = false;
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private userService: UserService
+  ) {}
 
   ngOnInit() {
     this.getUser();
@@ -37,36 +42,26 @@ export class MystoreComponent {
   }
 
   getUser() {
-    const authToken = localStorage.getItem('token');
-
-    if (authToken) {
-      const headers = new HttpHeaders({
-        Authorization: `Bearer ${authToken}`,
-      });
-
-      this.http.get(`${apiUrl}/auth/profile`, { headers }).subscribe(
-        (data: any) => {
-          this.user = data;
-          this.getStore(headers);
-        },
-        (error) => {
-          if (error.error.statusCode == 401) {
-            this.router.navigate(['login']);
-            localStorage.removeItem('token');
-          }
-        }
-      );
-    } else {
-      this.router.navigate(['login']);
-    }
+    this.userService.getUser().subscribe(
+      (data) => {
+        this.user = data;
+        this.getStore();
+      },
+      (err) => {
+        this.router.navigate(['login']);
+        localStorage.removeItem('token');
+      }
+    );
   }
 
-  getStore(headers: HttpHeaders) {
+  getStore() {
+    const headers = this.userService.createHeaders();
+
     this.http.get(`${apiUrl}/store/mystore`, { headers }).subscribe(
-      (data: any) => {
+      (data) => {
         this.store = data;
       },
-      (error) => {
+      (err) => {
         this.store = null;
       }
     );

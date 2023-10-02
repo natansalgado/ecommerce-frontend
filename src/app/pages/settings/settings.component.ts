@@ -1,5 +1,5 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UserService } from 'src/app/components/header/user/user.service';
@@ -9,7 +9,7 @@ import { apiUrl } from 'src/environment';
   selector: 'app-settings',
   templateUrl: './settings.component.html',
 })
-export class SettingsComponent implements OnInit {
+export class SettingsComponent {
   form: FormGroup | null = null;
   error: string = '';
 
@@ -31,32 +31,22 @@ export class SettingsComponent implements OnInit {
     private fb: FormBuilder
   ) {}
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.generateCard();
     this.getUser();
   }
 
   getUser() {
-    const authToken = localStorage.getItem('token');
-
-    if (authToken) {
-      const headers = new HttpHeaders({
-        Authorization: `Bearer ${authToken}`,
-      });
-
-      this.http.get(`${apiUrl}/auth/profile`, { headers }).subscribe(
-        (data: any) => {
-          this.user = data;
-          this.createForm();
-        },
-        (error) => {
-          localStorage.removeItem('token');
-          this.router.navigate(['/login']);
-        }
-      );
-    } else {
-      this.router.navigate(['/login']);
-    }
+    this.userService.getUser().subscribe(
+      (data) => {
+        this.user = data;
+        this.createForm();
+      },
+      () => {
+        localStorage.removeItem('token');
+        this.router.navigate(['/login']);
+      }
+    );
   }
 
   createForm() {
@@ -124,37 +114,28 @@ export class SettingsComponent implements OnInit {
         return;
       }
 
-      const authToken = localStorage.getItem('token');
+      const headers = this.userService.createHeaders();
 
-      if (authToken) {
-        const headers = new HttpHeaders({
-          Authorization: `Bearer ${authToken}`,
-        });
+      const data = { ...this.form.value };
 
-        const data = { ...this.form.value };
+      data.repeatPassword = undefined;
+      data.currentPassword = undefined;
 
-        data.repeatPassword = undefined;
-        data.currentPassword = undefined;
-
-        this.http
-          .put(`${apiUrl}/user/${this.user.id}`, data, {
-            headers,
-          })
-          .subscribe(
-            (res) => {
-              this.form?.get('password')?.setValue('');
-              this.form?.get('repeatPassword')?.setValue('');
-              this.form?.get('currentPassword')?.setValue('');
-              this.userService.getUser();
-            },
-            (err) => {
-              if (err.error.statusCode === 401)
-                this.router.navigate(['/login']);
-            }
-          );
-      } else {
-        this.router.navigate(['/login']);
-      }
+      this.http
+        .put(`${apiUrl}/user/${this.user.id}`, data, {
+          headers,
+        })
+        .subscribe(
+          (res) => {
+            this.form?.get('password')?.setValue('');
+            this.form?.get('repeatPassword')?.setValue('');
+            this.form?.get('currentPassword')?.setValue('');
+            this.userService.triggerUpdate();
+          },
+          (err) => {
+            if (err.error.statusCode === 401) this.router.navigate(['/login']);
+          }
+        );
     }
   }
 
@@ -257,32 +238,24 @@ export class SettingsComponent implements OnInit {
   }
 
   deposit() {
-    const authToken = localStorage.getItem('token');
+    const headers = this.userService.createHeaders();
 
-    if (authToken) {
-      const headers = new HttpHeaders({
-        Authorization: `Bearer ${authToken}`,
-      });
-
-      this.http
-        .post(`${apiUrl}/deposit`, { value: this.value }, { headers })
-        .subscribe(
-          (res) => {
-            this.depositSuccessMessage = `Depósito concluído com sucesso! valor: R$ ${this.value.toFixed(
-              2
-            )}`;
-            this.userService.getUser();
-            this.value = 0;
-          },
-          (err) => {
-            this.depositMessage = `Ocorreu um erro: ${err.error.message}`;
-            if (err.error.statusCode == 401) {
-              this.router.navigate(['login']);
-            }
+    this.http
+      .post(`${apiUrl}/deposit`, { value: this.value }, { headers })
+      .subscribe(
+        (res) => {
+          this.depositSuccessMessage = `Depósito concluído com sucesso! valor: R$ ${this.value.toFixed(
+            2
+          )}`;
+          this.userService.triggerUpdate();
+          this.value = 0;
+        },
+        (err) => {
+          this.depositMessage = `Ocorreu um erro: ${err.error.message}`;
+          if (err.error.statusCode == 401) {
+            this.router.navigate(['login']);
           }
-        );
-    } else {
-      this.router.navigate(['login']);
-    }
+        }
+      );
   }
 }

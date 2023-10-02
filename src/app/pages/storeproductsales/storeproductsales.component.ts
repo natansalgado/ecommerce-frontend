@@ -1,6 +1,7 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { UserService } from 'src/app/components/header/user/user.service';
 import { apiUrl } from 'src/environment';
 
 @Component({
@@ -18,7 +19,8 @@ export class StoreproductsalesComponent {
   constructor(
     private http: HttpClient,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private userService: UserService
   ) {}
 
   ngOnInit() {
@@ -26,65 +28,56 @@ export class StoreproductsalesComponent {
   }
 
   getUser() {
-    const authToken = localStorage.getItem('token');
-
-    if (authToken) {
-      const headers = new HttpHeaders({
-        Authorization: `Bearer ${authToken}`,
-      });
-
-      this.http.get(`${apiUrl}/auth/profile`, { headers }).subscribe(
-        (data: any) => {
-          this.user = data;
-          this.getStore(headers);
-        },
-        (error) => {
-          if (error.error.statusCode == 401) {
-            this.router.navigate(['login']);
-            localStorage.removeItem('token');
-          }
-        }
-      );
-    } else {
-      this.router.navigate(['login']);
-    }
+    this.userService.getUser().subscribe(
+      (data) => {
+        this.user = data;
+        this.getStore();
+      },
+      () => {
+        this.router.navigate(['login']);
+        localStorage.removeItem('token');
+      }
+    );
   }
 
-  getStore(headers: HttpHeaders) {
+  getStore() {
+    const headers = this.userService.createHeaders();
+
     this.http.get(`${apiUrl}/store/mystore`, { headers }).subscribe(
-      (data: any) => {
+      (data) => {
         this.store = data;
-        this.getProduct(headers);
+        this.getProduct();
       },
-      (error) => {
+      (err) => {
         this.store = null;
         this.router.navigate(['/mystore']);
       }
     );
   }
 
-  getProduct(headers: HttpHeaders) {
+  getProduct() {
     const id = this.route.snapshot.paramMap.get('id');
 
     this.http.get(`${apiUrl}/product/${id}`).subscribe(
-      (data: any) => {
+      (data) => {
         this.product = data;
-        this.getSales(headers);
+        this.getSales();
       },
-      (error) => {
+      (err) => {
         this.product = null;
       }
     );
   }
 
-  getSales(headers: HttpHeaders) {
+  getSales() {
     const id = this.route.snapshot.paramMap.get('id');
+    const headers = this.userService.createHeaders();
 
     this.http.get(`${apiUrl}/sale/${id}`, { headers }).subscribe(
-      (data: any) => {
+      (data) => {
         this.sales = data;
       },
-      (error) => {
+      (err) => {
         this.sales = null;
       }
     );

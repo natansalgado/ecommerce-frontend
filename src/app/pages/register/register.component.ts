@@ -70,8 +70,8 @@ export class RegisterComponent {
         (res: any) => {
           this.login();
         },
-        (error) => {
-          if (error.error.message === 'Email already in use') {
+        (err) => {
+          if (err.error.message === 'Email already in use') {
             this.error = 'Este email já está sendo utilizado.';
           } else {
             this.error = 'Ocorreu um erro, tente novamente mais tarde.';
@@ -90,7 +90,7 @@ export class RegisterComponent {
     this.http.post<any>(`${apiUrl}/auth/login`, loginData).subscribe(
       (res: any) => {
         localStorage.setItem('token', res.accessToken);
-        this.userService.getUser();
+        this.userService.triggerUpdate();
         this.back();
       },
       (err) => {
@@ -106,11 +106,7 @@ export class RegisterComponent {
 
   back() {
     const lastUrl = localStorage.getItem('lastUrl');
-    if (lastUrl) {
-      this.router.navigate([lastUrl]);
-    } else {
-      this.router.navigate(['/products']);
-    }
+    this.router.navigate([lastUrl || '/products']);
   }
 
   checkPassword() {

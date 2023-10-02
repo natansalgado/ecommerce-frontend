@@ -1,5 +1,5 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService } from 'src/app/components/header/user/user.service';
 import { apiUrl } from 'src/environment';
@@ -8,7 +8,7 @@ import { apiUrl } from 'src/environment';
   selector: 'app-cart',
   templateUrl: './cart.component.html',
 })
-export class CartComponent implements OnInit {
+export class CartComponent {
   cart: any = null;
   error: string | null = null;
 
@@ -23,94 +23,66 @@ export class CartComponent implements OnInit {
   }
 
   getCartFromApi() {
-    const token = localStorage.getItem('token');
+    const headers = this.userService.createHeaders();
 
-    if (token) {
-      const headers = new HttpHeaders({
-        Authorization: `Bearer ${token}`,
-      });
-
-      this.http.get(`${apiUrl}/cart`, { headers }).subscribe(
-        (response) => {
-          this.cart = response;
-        },
-        (err) => {
-          if (err.error.statusCode === 401) this.router.navigate(['/login']);
-        }
-      );
-    } else {
-      this.router.navigate(['/login']);
-    }
+    this.http.get(`${apiUrl}/cart`, { headers }).subscribe(
+      (response) => {
+        this.cart = response;
+      },
+      (err) => {
+        if (err.error.statusCode === 401) this.router.navigate(['/login']);
+      }
+    );
   }
 
   changeQuantity(productId: string, quantity: number) {
-    const token = localStorage.getItem('token');
+    const headers = this.userService.createHeaders();
 
-    if (token) {
-      const headers = new HttpHeaders({
-        Authorization: `Bearer ${token}`,
-      });
+    const body = { productId, quantity };
 
-      const body = { productId, quantity };
-
-      this.http.post(`${apiUrl}/cart/add`, body, { headers }).subscribe(
-        () => {
-          this.getCartFromApi();
-        },
-        (err) => {
-          if (err.error.statusCode === 401) this.router.navigate(['/login']);
-        }
-      );
-    } else {
-      this.router.navigate(['/login']);
-    }
+    this.http.post(`${apiUrl}/cart/add`, body, { headers }).subscribe(
+      () => {
+        this.getCartFromApi();
+      },
+      (err) => {
+        if (err.error.statusCode === 401) this.router.navigate(['/login']);
+      }
+    );
   }
 
   empty() {
-    const token = localStorage.getItem('token');
+    const headers = this.userService.createHeaders();
 
-    if (token) {
-      const headers = new HttpHeaders({
-        Authorization: `Bearer ${token}`,
+    this.http
+      .delete(`${apiUrl}/cart/empty`, {
+        headers,
+      })
+      .subscribe(() => {
+        this.getCartFromApi();
       });
-
-      this.http
-        .delete(`${apiUrl}/cart/empty`, {
-          headers,
-        })
-        .subscribe((res) => {
-          this.getCartFromApi();
-        });
-    }
   }
 
   finishPurchase() {
-    const token = localStorage.getItem('token');
+    const headers = this.userService.createHeaders();
 
-    if (token) {
-      const headers = new HttpHeaders({
-        Authorization: `Bearer ${token}`,
-      });
-
-      this.http.post(`${apiUrl}/historic`, {}, { headers }).subscribe(
-        () => {
-          this.userService.getUser();
-          this.getCartFromApi();
-          this.error = null;
-          localStorage.setItem('bought', 'true');
-          this.router.navigate(['/historic']);
-        },
-        (err) => {
-          if ((err.error.message = 'Insufficient funds')) {
-            this.error =
-              'Saldo da conta insuficiente. Faça um depósito para poder finalizar a compra.';
-          } else if (err.error.statusCode == 401) {
-            this.router.navigate(['/login']);
-          } else {
-            this.error = 'Erro ao tentar se conectar com o servidor.';
-          }
+    this.http.post(`${apiUrl}/historic`, {}, { headers }).subscribe(
+      () => {
+        this.userService.triggerUpdate();
+        this.getCartFromApi();
+        this.error = null;
+        localStorage.setItem('bought', 'true');
+        this.router.navigate(['/historic']);
+      },
+      (err) => {
+        if ((err.error.message = 'Insufficient funds')) {
+          this.error =
+            'Saldo da conta insuficiente. Faça um depósito para poder finalizar a compra.';
+        } else if (err.error.statusCode == 401) {
+          this.router.navigate(['/login']);
+        } else {
+          this.error = 'Erro ao tentar se conectar com o servidor.';
         }
-      );
-    } else this.router.navigate(['/login']);
+      }
+    );
   }
 }

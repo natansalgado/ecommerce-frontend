@@ -13,7 +13,7 @@ export class StoreComponent {
 
   constructor(private route: ActivatedRoute, private http: HttpClient) {}
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.route.params.subscribe(async (params) => {
       try {
         this.store = await this.http

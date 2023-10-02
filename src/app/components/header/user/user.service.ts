@@ -1,33 +1,37 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
+import { Observable, Subject } from 'rxjs';
 import { apiUrl } from 'src/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
-  user: any = null;
+  private updateSubject = new Subject<void>();
+  update$ = this.updateSubject.asObservable();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
-  getUser() {
-    const authToken = localStorage.getItem('token');
+  createHeaders() {
+    const token = localStorage.getItem('token');
 
-    if (authToken) {
-      const headers = new HttpHeaders({
-        Authorization: `Bearer ${authToken}`,
+    if (token) {
+      return new HttpHeaders({
+        Authorization: `Bearer ${token}`,
       });
-
-      this.http.get(`${apiUrl}/auth/profile`, { headers }).subscribe(
-        (data: any) => {
-          this.user = data;
-        },
-        (error) => {
-          if (error.error.statusCode == 401) {
-            localStorage.removeItem('token');
-          }
-        }
-      );
+    } else {
+      this.router.navigate(['/login']);
+      return undefined;
     }
+  }
+
+  getUser(): Observable<any> {
+    const headers = this.createHeaders();
+    return this.http.get<any>(`${apiUrl}/auth/profile`, { headers });
+  }
+
+  triggerUpdate() {
+    this.updateSubject.next();
   }
 }

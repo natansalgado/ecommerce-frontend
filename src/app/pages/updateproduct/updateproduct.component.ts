@@ -1,6 +1,7 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { UserService } from 'src/app/components/header/user/user.service';
 import { apiUrl } from 'src/environment';
 
 @Component({
@@ -28,7 +29,8 @@ export class UpdateproductComponent {
   constructor(
     private http: HttpClient,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private userService: UserService
   ) {}
 
   ngOnInit() {
@@ -36,38 +38,30 @@ export class UpdateproductComponent {
   }
 
   getUser() {
-    const authToken = localStorage.getItem('token');
-
-    if (authToken) {
-      const headers = new HttpHeaders({
-        Authorization: `Bearer ${authToken}`,
-      });
-
-      this.http.get(`${apiUrl}/auth/profile`, { headers }).subscribe(
-        (data: any) => {
-          this.user = data;
-          this.getStore(headers);
-        },
-        (error) => {
-          if (error.error.statusCode == 401) {
-            this.router.navigate(['/login']);
-            localStorage.removeItem('token');
-          }
-          this.router.navigate(['/mystore']);
+    this.userService.getUser().subscribe(
+      (data) => {
+        this.user = data;
+        this.getStore();
+      },
+      (err) => {
+        if (err.error.statusCode == 401) {
+          this.router.navigate(['/login']);
+          localStorage.removeItem('token');
         }
-      );
-    } else {
-      this.router.navigate(['/login']);
-    }
+        this.router.navigate(['/mystore']);
+      }
+    );
   }
 
-  getStore(headers: HttpHeaders) {
+  getStore() {
+    const headers = this.userService.createHeaders();
+
     this.http.get(`${apiUrl}/store/mystore`, { headers }).subscribe(
-      (data: any) => {
+      (data) => {
         this.store = data;
         this.getProduct();
       },
-      (error) => {
+      () => {
         this.store = null;
         this.router.navigate(['/mystore']);
       }
@@ -79,7 +73,7 @@ export class UpdateproductComponent {
       try {
         this.http
           .get<any>(`${apiUrl}/product/${params['id']}`)
-          .subscribe((data: any) => {
+          .subscribe((data) => {
             this.product = data;
             this.initialProduct = { ...data };
           });
@@ -125,7 +119,7 @@ export class UpdateproductComponent {
   }
 
   updateProduct() {
-    const token = localStorage.getItem('token');
+    const headers = this.userService.createHeaders();
 
     const { title, description, price, image_url, quantity } = this.product;
 
@@ -137,30 +131,22 @@ export class UpdateproductComponent {
       quantity,
     };
 
-    if (token) {
-      const headers = new HttpHeaders({
-        Authorization: `Bearer ${token}`,
-      });
-
-      this.http
-        .put(`${apiUrl}/product/${this.product.id}`, product, {
-          headers,
-        })
-        .subscribe(
-          () => {
-            localStorage.setItem('productUpdated', 'true');
-            this.router.navigate(['/mystore']);
-          },
-          (err) => {
-            if (err.error.statusCode == 401) {
-              this.router.navigate(['/login']);
-            } else {
-              this.error = err.error.message;
-            }
+    this.http
+      .put(`${apiUrl}/product/${this.product.id}`, product, {
+        headers,
+      })
+      .subscribe(
+        () => {
+          localStorage.setItem('productUpdated', 'true');
+          this.router.navigate(['/mystore']);
+        },
+        (err) => {
+          if (err.error.statusCode == 401) {
+            this.router.navigate(['/login']);
+          } else {
+            this.error = err.error.message;
           }
-        );
-    } else {
-      this.router.navigate(['/login']);
-    }
+        }
+      );
   }
 }

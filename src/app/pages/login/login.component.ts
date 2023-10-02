@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { UserService } from 'src/app/components/header/user/user.service';
-import { apiUrl } from 'src/environment';
+import { LoginService } from './login.service';
 
 @Component({
   selector: 'app-login',
@@ -14,29 +13,22 @@ export class LoginComponent {
   error: string = '';
 
   constructor(
-    private http: HttpClient,
+    private loginService: LoginService,
     private router: Router,
     private userService: UserService
   ) {}
 
-  ngOnInit(): void {
-    const token = localStorage.getItem('token');
-
-    if (token) {
+  ngOnInit() {
+    if (localStorage.getItem('token')) {
       this.router.navigate(['/products']);
     }
   }
 
-  login(): void {
-    const loginData = {
-      email: this.email,
-      password: this.password,
-    };
-
-    this.http.post<any>(`${apiUrl}/auth/login`, loginData).subscribe(
-      (res: any) => {
+  login() {
+    this.loginService.login(this.email, this.password).subscribe(
+      (res) => {
         localStorage.setItem('token', res.accessToken);
-        this.userService.getUser();
+        this.userService.triggerUpdate();
         this.back();
       },
       (err) => {
@@ -52,10 +44,6 @@ export class LoginComponent {
 
   back() {
     const lastUrl = localStorage.getItem('lastUrl');
-    if (lastUrl) {
-      this.router.navigate([lastUrl]);
-    } else {
-      this.router.navigate(['/products']);
-    }
+    this.router.navigate([lastUrl || '/products']);
   }
 }

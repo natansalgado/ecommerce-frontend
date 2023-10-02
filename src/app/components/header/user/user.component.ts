@@ -1,22 +1,39 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService } from './user.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-user',
   templateUrl: './user.component.html',
   styleUrls: ['./user.component.css'],
 })
-export class UserComponent implements OnInit {
-  userService = this.userServiceConstructor;
+export class UserComponent {
+  user: any = null;
+  show = false;
 
-  constructor(
-    private router: Router,
-    private userServiceConstructor: UserService
-  ) {}
+  private updateSubscription!: Subscription;
 
-  ngOnInit(): void {
-    this.userService.getUser();
+  constructor(private router: Router, private userService: UserService) {}
+
+  ngOnInit() {
+    this.updateSubscription = this.userService.update$.subscribe(() => {
+      this.getUser();
+    });
+
+    this.getUser();
+  }
+
+  getUser() {
+    this.userService.getUser().subscribe((data) => {
+      this.user = data;
+    });
+  }
+
+  abilityShow() {
+    setTimeout(() => {
+      if (!this.user) this.show = true;
+    }, 100);
   }
 
   quit() {
@@ -29,5 +46,9 @@ export class UserComponent implements OnInit {
       localStorage.setItem('lastUrl', this.router.url);
       this.router.navigate(['/login']);
     }
+  }
+
+  ngOnDestroy() {
+    this.updateSubscription.unsubscribe();
   }
 }

@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { UserService } from 'src/app/components/header/user/user.service';
 import { apiUrl } from 'src/environment';
 
 @Component({
@@ -11,7 +12,11 @@ export class HistoricComponent {
   historic: any = null;
   bought = false;
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private userService: UserService
+  ) {}
 
   ngOnInit() {
     if (localStorage.getItem('bought')) {
@@ -19,23 +24,15 @@ export class HistoricComponent {
       this.bought = true;
     }
 
-    const token = localStorage.getItem('token');
+    const headers = this.userService.createHeaders();
 
-    if (token) {
-      const headers = {
-        Authorization: `Bearer ${token}`,
-      };
-
-      this.http.get(`${apiUrl}/historic`, { headers }).subscribe(
-        (res) => {
-          this.historic = res;
-        },
-        (err) => {
-          if (err.error.statusCode === 401) this.router.navigate(['/login']);
-        }
-      );
-    } else {
-      this.router.navigate(['/login']);
-    }
+    this.http.get(`${apiUrl}/historic`, { headers }).subscribe(
+      (res) => {
+        this.historic = res;
+      },
+      (err) => {
+        if (err.error.statusCode === 401) this.router.navigate(['/login']);
+      }
+    );
   }
 }
