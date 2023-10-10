@@ -32,8 +32,8 @@ export class StoresalesComponent {
         this.getStore();
       },
       () => {
-        this.router.navigate(['login']);
         localStorage.removeItem('token');
+        this.router.navigate(['/login']);
       }
     );
   }

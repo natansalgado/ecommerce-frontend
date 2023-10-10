@@ -48,8 +48,8 @@ export class MystoreComponent {
         this.getStore();
       },
       (err) => {
-        this.router.navigate(['login']);
         localStorage.removeItem('token');
+        this.router.navigate(['/login']);
       }
     );
   }

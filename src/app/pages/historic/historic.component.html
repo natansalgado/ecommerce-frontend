@@ -1,7 +1,13 @@
 <div class="container mt-5">
-  <h1 class="mb-0">Hitórico de Compras</h1>
+  <h1 class="mb-0">Histórico de Compras</h1>
 
-  <h5 *ngIf="bought" class="alert alert-success mt-4" style="margin-bottom: -45px">
+  <h5 *ngIf="historic.length < 1" class="mt-3">Você ainda não fez nenhuma compra...</h5>
+
+  <h5
+    *ngIf="bought"
+    class="alert alert-success mt-4"
+    style="margin-bottom: -45px"
+  >
     <strong>Compra efetuada com sucesso!</strong>
   </h5>
 

@@ -1,6 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 import { Observable, Subject } from 'rxjs';
 import { apiUrl } from 'src/environment';
 
@@ -11,7 +10,7 @@ export class UserService {
   private updateSubject = new Subject<void>();
   update$ = this.updateSubject.asObservable();
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient) {}
 
   createHeaders() {
     const token = localStorage.getItem('token');
@@ -21,14 +20,13 @@ export class UserService {
         Authorization: `Bearer ${token}`,
       });
     } else {
-      this.router.navigate(['/login']);
       return undefined;
     }
   }
 
   getUser(): Observable<any> {
     const headers = this.createHeaders();
-    return this.http.get<any>(`${apiUrl}/auth/profile`, { headers });
+    return this.http.get(`${apiUrl}/auth/profile`, { headers });
   }
 
   triggerUpdate() {

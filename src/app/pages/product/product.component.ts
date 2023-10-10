@@ -70,9 +70,6 @@ export class ProductComponent {
         (err) => {
           localStorage.removeItem('token');
           this.isLogged = false;
-          if (err.error.statusCode == 401) {
-            this.router.navigate(['login']);
-          }
         }
       );
   }

@@ -133,7 +133,9 @@ export class SettingsComponent {
             this.userService.triggerUpdate();
           },
           (err) => {
-            if (err.error.statusCode === 401) this.router.navigate(['/login']);
+            if (err.error.statusCode === 401) {
+              this.router.navigate(['/login']);
+            }
           }
         );
     }
@@ -253,7 +255,7 @@ export class SettingsComponent {
         (err) => {
           this.depositMessage = `Ocorreu um erro: ${err.error.message}`;
           if (err.error.statusCode == 401) {
-            this.router.navigate(['login']);
+            this.router.navigate(['/login']);
           }
         }
       );

@@ -28,21 +28,16 @@ export class UserComponent {
     );
 
     this.getUser();
+    this.enableShow();
   }
 
   getUser() {
-    this.userService.getUser().subscribe(
-      (data) => {
-        this.user = data;
-      },
-      () => {
-        localStorage.removeItem('token');
-        this.router.navigate(['/login']);
-      }
-    );
+    this.userService.getUser().subscribe((data) => {
+      this.user = data;
+    });
   }
 
-  abilityShow() {
+  enableShow() {
     setTimeout(() => {
       if (!this.user) this.show = true;
     }, 100);
@@ -54,10 +49,8 @@ export class UserComponent {
   }
 
   login() {
-    if (this.router.url !== '/login' && this.router.url !== '/register') {
-      localStorage.setItem('lastUrl', this.router.url);
-      this.router.navigate(['/login']);
-    }
+    localStorage.setItem('lastUrl', this.router.url);
+    this.router.navigate(['/login']);
   }
 
   ngOnDestroy() {

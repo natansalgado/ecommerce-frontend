@@ -30,7 +30,9 @@ export class CartComponent {
         this.cart = response;
       },
       (err) => {
-        if (err.error.statusCode === 401) this.router.navigate(['/login']);
+        if (err.error.statusCode === 401) {
+          this.router.navigate(['/login']);
+        }
       }
     );
   }
@@ -45,7 +47,9 @@ export class CartComponent {
         this.getCartFromApi();
       },
       (err) => {
-        if (err.error.statusCode === 401) this.router.navigate(['/login']);
+        if (err.error.statusCode === 401) {
+          this.router.navigate(['/login']);
+        }
       }
     );
   }

@@ -31,7 +31,9 @@ export class HistoricComponent {
         this.historic = res;
       },
       (err) => {
-        if (err.error.statusCode === 401) this.router.navigate(['/login']);
+        if (err.error.statusCode === 401) {
+          this.router.navigate(['/login']);
+        }
       }
     );
   }
